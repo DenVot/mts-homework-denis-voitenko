@@ -4,8 +4,6 @@ import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.repositories.HashMapBooksRepository;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 
-import java.util.Set;
-
 public class BookService {
 
   private final HashMapBooksRepository booksRepository;
@@ -14,11 +12,15 @@ public class BookService {
     this.booksRepository = booksRepository;
   }
 
-  public Book createNew(String author, String title, Set<String> tags) throws InvalidBookDataException {
-    if (author == null || title == null || tags == null) {
+  public Book createNew(BookCreationInfo creationInfo) throws InvalidBookDataException {
+    if (creationInfo.author() == null ||
+            creationInfo.title() == null ||
+            creationInfo.tags() == null) {
       throw new InvalidBookDataException();
     }
 
-    return booksRepository.createBook(author, title, tags);
+    return booksRepository.createBook(creationInfo.author(),
+            creationInfo.title(),
+            creationInfo.tags());
   }
 }

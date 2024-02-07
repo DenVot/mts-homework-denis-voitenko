@@ -28,7 +28,12 @@ class BookServiceTest {
     var tags = new HashSet<String>();
     tags.add("Романы");
 
-    var createdBook = bookService.createNew("Кент Бек", "Экстремальное программирование. Разработка через тестирование", tags);
+    BookCreationInfo info = new BookCreationInfo(
+            "Кент Бек",
+            "Экстремальное программирование. Разработка через тестирование",
+            tags);
+
+    var createdBook = bookService.createNew(info);
 
     Assertions.assertNotNull(createdBook);
     Assertions.assertTrue(hashTable.containsKey(createdBook.getId()));
@@ -40,16 +45,26 @@ class BookServiceTest {
     var tags = new HashSet<String>();
     tags.add("Романы");
 
-    Assertions.assertThrows(InvalidBookDataException.class, () -> {
-      bookService.createNew(null, "Экстремальное программирование. Разработка через тестирование", tags);
-    });
+    BookCreationInfo infoWithNullAuthor = new BookCreationInfo(
+            null,
+            "Экстремальное программирование. Разработка через тестирование",
+            tags);
+    BookCreationInfo infoWithNullTitle = new BookCreationInfo(
+            "Кент Бек",
+            null,
+            tags);
+    BookCreationInfo infoWithNullTags = new BookCreationInfo(
+            "Кент Бек",
+            "Экстремальное программирование. Разработка через тестирование",
+            null);
 
-    Assertions.assertThrows(InvalidBookDataException.class, () -> {
-      bookService.createNew("Кент Бек", null, tags);
-    });
+    Assertions.assertThrows(InvalidBookDataException.class,
+            () -> bookService.createNew(infoWithNullAuthor));
 
-    Assertions.assertThrows(InvalidBookDataException.class, () -> {
-      bookService.createNew("Кент Бек", "Экстремальное программирование. Разработка через тестирование", null);
-    });
+    Assertions.assertThrows(InvalidBookDataException.class,
+            () -> bookService.createNew(infoWithNullTitle));
+
+    Assertions.assertThrows(InvalidBookDataException.class,
+            () -> bookService.createNew(infoWithNullTags));
   }
 }
