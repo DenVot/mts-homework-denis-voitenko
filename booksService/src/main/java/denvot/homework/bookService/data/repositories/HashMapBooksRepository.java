@@ -2,6 +2,7 @@ package denvot.homework.bookService.data.repositories;
 
 import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.entities.BookId;
+import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -21,5 +22,21 @@ public class HashMapBooksRepository {
     books.put(bookId, book);
 
     return book;
+  }
+
+  public Book findBook(BookId id) throws BookNotFoundException {
+    failIfBookNotExists(id);
+    return books.get(id);
+  }
+
+  public void deleteBook(BookId id) throws BookNotFoundException {
+    failIfBookNotExists(id);
+    books.remove(id);
+  }
+
+  private void failIfBookNotExists(BookId id) throws BookNotFoundException {
+    if (!books.containsKey(id)) {
+      throw new BookNotFoundException();
+    }
   }
 }
