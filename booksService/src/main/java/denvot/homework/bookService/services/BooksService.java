@@ -44,4 +44,15 @@ public class BooksService {
       return false;
     }
   }
+
+  public Optional<Book> updateBook(BookId id, BookUpdatingStrategy updatingStrategy) {
+    var target = findBook(id);
+    if (target.isEmpty()) return target;
+
+    var targetBook = target.get();
+
+    updatingStrategy.update(targetBook);
+
+    return target;
+  }
 }
