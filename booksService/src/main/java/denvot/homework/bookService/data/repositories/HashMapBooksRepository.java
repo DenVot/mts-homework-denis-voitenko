@@ -40,7 +40,7 @@ public class HashMapBooksRepository implements BooksRepository {
   }
 
   @Override
-  public ArrayList<Book> getByTags(HashSet<String> tags) {
+  public ArrayList<Book> getByTags(Set<String> tags) {
     var list = new ArrayList<Book>();
 
     for (var book : books.values()) {

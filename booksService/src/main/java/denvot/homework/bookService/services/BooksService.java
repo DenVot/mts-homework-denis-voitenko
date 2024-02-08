@@ -6,7 +6,9 @@ import denvot.homework.bookService.data.repositories.BooksRepository;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 
 public class BooksService {
 
@@ -54,5 +56,9 @@ public class BooksService {
     updatingStrategy.update(targetBook);
 
     return target;
+  }
+
+  public ArrayList<Book> getBooksByTags(Set<String> tags) {
+    return booksRepository.getByTags(tags);
   }
 }
