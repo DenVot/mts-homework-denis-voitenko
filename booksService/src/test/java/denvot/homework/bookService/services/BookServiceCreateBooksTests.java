@@ -1,26 +1,25 @@
 package denvot.homework.bookService.services;
 
-import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
-import denvot.homework.bookService.data.repositories.HashMapBooksRepository;
+import denvot.homework.bookService.data.repositories.BooksRepository;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
-class BookServiceTest {
-  private BookService bookService;
-  private HashMap<BookId, Book> hashTable;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+class BookServiceCreateBooksTests {
+  private BooksRepository repository;
+  private BooksService booksService;
 
   @BeforeEach
   public void setUp() {
-    hashTable = new HashMap<>();
-    HashMapBooksRepository bookRepository = new HashMapBooksRepository(hashTable);
-    bookService = new BookService(bookRepository);
+    repository = mock(BooksRepository.class);
+    booksService = new BooksService(repository);
   }
 
   @Test
@@ -33,11 +32,9 @@ class BookServiceTest {
             "Экстремальное программирование. Разработка через тестирование",
             tags);
 
-    var createdBook = bookService.createNew(info);
+    booksService.createNew(info);
 
-    Assertions.assertNotNull(createdBook);
-    Assertions.assertTrue(hashTable.containsKey(createdBook.getId()));
-    Assertions.assertEquals(createdBook, hashTable.get(createdBook.getId()));
+    verify(repository).createBook(any(), any(), any());
   }
 
   @Test
@@ -59,12 +56,12 @@ class BookServiceTest {
             null);
 
     Assertions.assertThrows(InvalidBookDataException.class,
-            () -> bookService.createNew(infoWithNullAuthor));
+            () -> booksService.createNew(infoWithNullAuthor));
 
     Assertions.assertThrows(InvalidBookDataException.class,
-            () -> bookService.createNew(infoWithNullTitle));
+            () -> booksService.createNew(infoWithNullTitle));
 
     Assertions.assertThrows(InvalidBookDataException.class,
-            () -> bookService.createNew(infoWithNullTags));
+            () -> booksService.createNew(infoWithNullTags));
   }
 }

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class HashMapBooksRepository {
+public class HashMapBooksRepository implements BooksRepository {
   private static final AtomicInteger nextBookId = new AtomicInteger();
   private final HashMap<BookId, Book> books;
 
