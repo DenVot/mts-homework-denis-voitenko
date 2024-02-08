@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class BookServiceDeleteBookTests {
+public class BooksServiceDeleteBookTests {
   private BooksRepository repository;
   private BooksService booksService;
 
