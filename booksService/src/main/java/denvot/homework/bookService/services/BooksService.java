@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 
-public class BooksService {
+public class BooksService implements BooksServiceBase {
 
   private final BooksRepository booksRepository;
 
@@ -18,6 +18,7 @@ public class BooksService {
     this.booksRepository = booksRepository;
   }
 
+  @Override
   public Book createNew(BookCreationInfo creationInfo) throws InvalidBookDataException {
     if (creationInfo.author() == null ||
             creationInfo.title() == null ||
@@ -30,6 +31,7 @@ public class BooksService {
             creationInfo.tags());
   }
 
+  @Override
   public Optional<Book> findBook(BookId id) {
     try {
       return Optional.of(booksRepository.findBook(id));
@@ -38,6 +40,7 @@ public class BooksService {
     }
   }
 
+  @Override
   public boolean deleteBook(BookId id) {
     try {
       booksRepository.deleteBook(id);
@@ -47,6 +50,7 @@ public class BooksService {
     }
   }
 
+  @Override
   public Optional<Book> updateBook(BookId id, BookUpdatingStrategy updatingStrategy) {
     var target = findBook(id);
     if (target.isEmpty()) return target;
@@ -58,6 +62,7 @@ public class BooksService {
     return target;
   }
 
+  @Override
   public ArrayList<Book> getBooksByTags(Set<String> tags) {
     return booksRepository.getByTags(tags);
   }
