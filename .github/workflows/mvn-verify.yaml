@@ -1,5 +1,5 @@
 name: Maven verify
-on: pull-request
+on: pull_request
 
 jobs:
   mvn-verify:
