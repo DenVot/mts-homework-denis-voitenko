@@ -3,8 +3,6 @@ package denvot.homework.bookService.data.entities;
 import java.util.Set;
 
 public class Book {
-  private static int key = 0;
-
   private final BookId id;
   private String author;
   private String title;
