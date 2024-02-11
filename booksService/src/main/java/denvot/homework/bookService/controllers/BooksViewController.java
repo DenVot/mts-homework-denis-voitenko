@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @Controller
@@ -22,6 +23,7 @@ public class BooksViewController {
     var apiBooks = booksService.getAllBooks()
             .stream()
             .map(BookApiEntity::fromBook)
+            .sorted(Comparator.comparing(BookApiEntity::id))
             .collect(Collectors.toList());
 
     model.addAttribute("books", apiBooks);

@@ -9,6 +9,7 @@
     <table>
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Автор</th>
                 <th>Название</th>
                 <th>Теги</th>
@@ -16,6 +17,7 @@
         </thead>
         <tbody>
             <tr th:each="book:${books}">
+                <td th:text="${book.id() + 1}"></td>
                 <td th:text="${book.author()}"></td>
                 <td th:text="${book.title()}"></td>
                 <td>
