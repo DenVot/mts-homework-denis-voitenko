@@ -17,6 +17,10 @@ public final class BookId {
     return id == bookId.id;
   }
 
+  public int getValue() {
+    return id;
+  }
+
   @Override
   public int hashCode() {
     return Objects.hash(id);
