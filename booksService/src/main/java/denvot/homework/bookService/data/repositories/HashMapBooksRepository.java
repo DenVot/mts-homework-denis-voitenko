@@ -3,6 +3,7 @@ package denvot.homework.bookService.data.repositories;
 import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,12 +11,17 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Component
 public class HashMapBooksRepository implements BooksRepository {
   private static final AtomicInteger nextBookId = new AtomicInteger();
   private final HashMap<BookId, Book> books;
 
   public HashMapBooksRepository(HashMap<BookId, Book> books) {
     this.books = books;
+  }
+
+  public HashMapBooksRepository() {
+    this(new HashMap<>());
   }
 
   @Override
