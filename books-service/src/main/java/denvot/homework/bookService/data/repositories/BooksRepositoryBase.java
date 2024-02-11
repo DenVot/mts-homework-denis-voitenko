@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public interface BooksRepository {
+public interface BooksRepositoryBase {
   Book createBook(String author, String title, Set<String> tags);
 
   Book findBook(BookId id) throws BookNotFoundException;

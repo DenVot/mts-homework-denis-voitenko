@@ -2,7 +2,7 @@ package denvot.homework.bookService.services;
 
 import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.entities.BookId;
-import denvot.homework.bookService.data.repositories.BooksRepository;
+import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,12 +13,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class BooksServiceFindBooksTests {
-  private BooksRepository repository;
+  private BooksRepositoryBase repository;
   private BooksService booksService;
 
   @BeforeEach
   public void setUp() {
-    repository = mock(BooksRepository.class);
+    repository = mock(BooksRepositoryBase.class);
     booksService = new BooksService(repository);
   }
 

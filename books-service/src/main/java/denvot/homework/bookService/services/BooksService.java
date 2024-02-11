@@ -2,7 +2,7 @@ package denvot.homework.bookService.services;
 
 import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.entities.BookId;
-import denvot.homework.bookService.data.repositories.BooksRepository;
+import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import org.springframework.stereotype.Service;
@@ -15,9 +15,9 @@ import java.util.Set;
 @Service
 public class BooksService implements BooksServiceBase {
 
-  private final BooksRepository booksRepository;
+  private final BooksRepositoryBase booksRepository;
 
-  public BooksService(BooksRepository booksRepository) {
+  public BooksService(BooksRepositoryBase booksRepository) {
     this.booksRepository = booksRepository;
   }
 

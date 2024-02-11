@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class HashMapBooksRepository implements BooksRepository {
+public class HashMapBooksRepository implements BooksRepositoryBase {
   private static final AtomicInteger nextBookId = new AtomicInteger();
   private final HashMap<BookId, Book> books;
 
