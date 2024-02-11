@@ -5,6 +5,7 @@ import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,4 +19,6 @@ public interface BooksServiceBase {
   Optional<Book> updateBook(BookId id, BookUpdatingStrategy updatingStrategy);
 
   ArrayList<Book> getBooksByTags(Set<String> tags);
+
+  List<Book> getAllBooks();
 }

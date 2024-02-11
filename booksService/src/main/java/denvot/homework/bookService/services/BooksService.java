@@ -8,6 +8,7 @@ import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -67,5 +68,10 @@ public class BooksService implements BooksServiceBase {
   @Override
   public ArrayList<Book> getBooksByTags(Set<String> tags) {
     return booksRepository.getByTags(tags);
+  }
+
+  @Override
+  public List<Book> getAllBooks() {
+    return booksRepository.getAllBooks();
   }
 }

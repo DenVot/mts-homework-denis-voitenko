@@ -5,10 +5,7 @@ import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
@@ -59,6 +56,11 @@ public class HashMapBooksRepository implements BooksRepository {
     }
 
     return list;
+  }
+
+  @Override
+  public List<Book> getAllBooks() {
+    return books.values().stream().toList();
   }
 
   private void failIfBookNotExists(BookId id) throws BookNotFoundException {

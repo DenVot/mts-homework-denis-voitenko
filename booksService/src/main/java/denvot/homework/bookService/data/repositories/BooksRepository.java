@@ -5,6 +5,7 @@ import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public interface BooksRepository {
@@ -15,4 +16,6 @@ public interface BooksRepository {
   void deleteBook(BookId id) throws BookNotFoundException;
 
   ArrayList<Book> getByTags(Set<String> objects);
+
+  List<Book> getAllBooks();
 }
