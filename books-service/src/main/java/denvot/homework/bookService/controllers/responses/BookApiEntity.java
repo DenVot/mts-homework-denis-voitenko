@@ -2,11 +2,14 @@ package denvot.homework.bookService.controllers.responses;
 
 import denvot.homework.bookService.data.entities.Book;
 
-public record BookApiEntity(long id, String author, String title, String[] tags) {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public record BookApiEntity(long id, AuthorApiEntity author, String title, List<TagApiEntity> tags) {
   public static BookApiEntity fromBook(Book book) {
     return new BookApiEntity(book.getId(),
-            book.getAuthor(),
+            AuthorApiEntity.fromAuthor(book.getAuthor()),
             book.getTitle(),
-            book.getTags().toArray(new String[0]));
+            book.getTags().stream().map(TagApiEntity::fromTag).collect(Collectors.toList()));
   }
 }
