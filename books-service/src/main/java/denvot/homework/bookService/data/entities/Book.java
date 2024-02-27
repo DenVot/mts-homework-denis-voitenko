@@ -1,45 +1,45 @@
 package denvot.homework.bookService.data.entities;
 
-import java.util.Set;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "books", schema = "books_service")
 public class Book {
-  private final long id;
-  private String author;
+  @Id
+  @Column(name = "id")
+  private Long id;
+
+  @Column(name = "author_id")
+  private Long authorId;
+
+  @Column(name = "title", length = Integer.MAX_VALUE)
   private String title;
-  private Set<String> tags;
 
-  public Book(long id, String author, String title, Set<String> tags) {
-    this.id = id;
-    this.author = author;
-    this.title = title;
-    this.tags = tags;
-  }
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Author author;
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
-  public String getAuthor() {
-    return author;
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public Long getAuthorId() {
+    return authorId;
+  }
+
+  public void setAuthorId(Long authorId) {
+    this.authorId = authorId;
   }
 
   public String getTitle() {
     return title;
   }
 
-  public Set<String> getTags() {
-    return tags;
-  }
-
-  public void setAuthor(String author) {
-    this.author = author;
-  }
-
   public void setTitle(String title) {
     this.title = title;
   }
 
-  public void setTags(Set<String> tags) {
-    this.tags = tags;
-  }
 }
