@@ -1,7 +1,7 @@
 package denvot.homework.bookService.data.repositories;
 
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
+
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class HashMapBooksRepositoryFindBookTests {
-  private HashMap<BookId, Book> hashMap;
+  private HashMap<Long, Book> hashMap;
   private HashMapBooksRepository repository;
 
   @BeforeEach
@@ -22,12 +22,12 @@ public class HashMapBooksRepositoryFindBookTests {
 
   @Test
   public void testSimpleFind() throws BookNotFoundException {
-    var id = new BookId(1);
+    var id = 1L;
     var book = new Book(id, "Кент Бек", "TDD", new HashSet<>());
 
     hashMap.put(id, book);
 
-    Book result = repository.findBook(new BookId(1));
+    Book result = repository.findBook(1L);
 
     Assertions.assertNotNull(result);
     Assertions.assertEquals(result, book);
@@ -36,6 +36,6 @@ public class HashMapBooksRepositoryFindBookTests {
   @Test
   public void testItemNotFound() {
     Assertions.assertThrows(BookNotFoundException.class,
-            () -> repository.findBook(new BookId(1)));
+            () -> repository.findBook(1L));
   }
 }

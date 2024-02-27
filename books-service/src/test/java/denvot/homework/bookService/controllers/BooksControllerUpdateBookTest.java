@@ -3,7 +3,6 @@ package denvot.homework.bookService.controllers;
 import denvot.homework.bookService.controllers.requests.BookUpdateRequest;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.services.BooksServiceBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +21,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,11 +40,11 @@ public class BooksControllerUpdateBookTest {
 
   @Test
   public void testUpdateWithChanges() {
-    var testBook = Optional.of(new Book(new BookId(1), "Кент Бек", "TDD", Set.of("Записки гения")));
+    var testBook = Optional.of(new Book(1, "Кент Бек", "TDD", Set.of("Записки гения")));
 
-    when(booksService.updateBookAuthor(any(), any())).thenReturn(testBook);
-    when(booksService.updateBookTags(any(), any())).thenReturn(testBook);
-    when(booksService.updateBookTitle(any(), any())).thenReturn(testBook);
+    when(booksService.updateBookAuthor(anyLong(), any())).thenReturn(testBook);
+    when(booksService.updateBookTags(anyLong(), any())).thenReturn(testBook);
+    when(booksService.updateBookTitle(anyLong(), any())).thenReturn(testBook);
 
     BookUpdateRequest updateRequest = new BookUpdateRequest("Джеффри Рихтер", "CLR via C#", new String[] {"Записки сумасшедшего"});
     HttpEntity<BookUpdateRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
@@ -59,16 +59,16 @@ public class BooksControllerUpdateBookTest {
     assertEquals("Кент Бек", body.author());
     assertEquals("TDD", body.title());
     assertArrayEquals(new String[] {"Записки гения"}, body.tags());
-    verify(booksService).updateBookAuthor(any(), any());
-    verify(booksService).updateBookTitle(any(), any());
-    verify(booksService).updateBookTags(any(), any());
+    verify(booksService).updateBookAuthor(anyLong(), any());
+    verify(booksService).updateBookTitle(anyLong(), any());
+    verify(booksService).updateBookTags(anyLong(), any());
   }
 
   @Test
   public void testUpdateNotFound() {
-    when(booksService.updateBookAuthor(any(), any())).thenReturn(Optional.empty());
-    when(booksService.updateBookTags(any(), any())).thenReturn(Optional.empty());
-    when(booksService.updateBookTitle(any(), any())).thenReturn(Optional.empty());
+    when(booksService.updateBookAuthor(anyLong(), any())).thenReturn(Optional.empty());
+    when(booksService.updateBookTags(anyLong(), any())).thenReturn(Optional.empty());
+    when(booksService.updateBookTitle(anyLong(), any())).thenReturn(Optional.empty());
 
     BookUpdateRequest updateRequest = new BookUpdateRequest("Джеффри Рихтер", "CLR via C#", new String[] {"Записки сумасшедшего"});
     HttpEntity<BookUpdateRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
@@ -79,11 +79,11 @@ public class BooksControllerUpdateBookTest {
 
   @Test
   public void testNoUpdate() {
-    var testBook = Optional.of(new Book(new BookId(1), "Кент Бек", "TDD", Set.of("Записки гения")));
+    var testBook = Optional.of(new Book(1, "Кент Бек", "TDD", Set.of("Записки гения")));
 
-    when(booksService.updateBookAuthor(any(), any())).thenReturn(testBook);
-    when(booksService.updateBookTags(any(), any())).thenReturn(testBook);
-    when(booksService.updateBookTitle(any(), any())).thenReturn(testBook);
+    when(booksService.updateBookAuthor(anyLong(), any())).thenReturn(testBook);
+    when(booksService.updateBookTags(anyLong(), any())).thenReturn(testBook);
+    when(booksService.updateBookTitle(anyLong(), any())).thenReturn(testBook);
     BookUpdateRequest updateRequest = new BookUpdateRequest(null, null, null);
 
     HttpEntity<BookUpdateRequest> updateRequestEntity = new HttpEntity<>(updateRequest);

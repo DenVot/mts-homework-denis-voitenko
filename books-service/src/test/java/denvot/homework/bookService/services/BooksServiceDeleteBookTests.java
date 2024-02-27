@@ -1,13 +1,12 @@
 package denvot.homework.bookService.services;
 
-import denvot.homework.bookService.data.entities.BookId;
+
 import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class BooksServiceDeleteBookTests {
@@ -22,19 +21,19 @@ public class BooksServiceDeleteBookTests {
 
   @Test
   public void testSimpleDelete() throws BookNotFoundException {
-    boolean isDeleted = booksService.deleteBook(new BookId(1));
+    boolean isDeleted = booksService.deleteBook(1L);
 
-    verify(repository).deleteBook(any());
+    verify(repository).deleteBook(1L);
     Assertions.assertTrue(isDeleted);
   }
 
   @Test
   public void testDeleteBookNotExists() throws BookNotFoundException {
-    doThrow(new BookNotFoundException()).when(repository).deleteBook(any());
+    doThrow(new BookNotFoundException()).when(repository).deleteBook(1L);
 
-    boolean isDeleted = booksService.deleteBook(new BookId(1));
+    boolean isDeleted = booksService.deleteBook(1L);
 
-    verify(repository).deleteBook(any());
+    verify(repository).deleteBook(1L);
     Assertions.assertFalse(isDeleted);
   }
 }

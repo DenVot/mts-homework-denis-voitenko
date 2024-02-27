@@ -1,19 +1,18 @@
 package denvot.homework.bookService.data.repositories;
 
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class HashMapBooksRepository implements BooksRepositoryBase {
-  private static final AtomicInteger nextBookId = new AtomicInteger();
-  private final HashMap<BookId, Book> books;
+  private static final AtomicLong nextLong = new AtomicLong();
+  private final HashMap<Long, Book> books;
 
-  public HashMapBooksRepository(HashMap<BookId, Book> books) {
+  public HashMapBooksRepository(HashMap<Long, Book> books) {
     this.books = books;
   }
 
@@ -23,21 +22,21 @@ public class HashMapBooksRepository implements BooksRepositoryBase {
 
   @Override
   public Book createBook(String author, String title, Set<String> tags) {
-    var bookId = new BookId(nextBookId.getAndIncrement());
-    var book = new Book(bookId, author, title, tags);
-    books.put(bookId, book);
+    var id = nextLong.getAndIncrement();
+    var book = new Book(id, author, title, tags);
+    books.put(id, book);
 
     return book;
   }
 
   @Override
-  public Book findBook(BookId id) throws BookNotFoundException {
+  public Book findBook(long id) throws BookNotFoundException {
     failIfBookNotExists(id);
     return books.get(id);
   }
 
   @Override
-  public void deleteBook(BookId id) throws BookNotFoundException {
+  public void deleteBook(long id) throws BookNotFoundException {
     failIfBookNotExists(id);
     books.remove(id);
   }
@@ -63,7 +62,7 @@ public class HashMapBooksRepository implements BooksRepositoryBase {
     return books.values().stream().toList();
   }
 
-  private void failIfBookNotExists(BookId id) throws BookNotFoundException {
+  private void failIfBookNotExists(long id) throws BookNotFoundException {
     if (!books.containsKey(id)) {
       throw new BookNotFoundException();
     }

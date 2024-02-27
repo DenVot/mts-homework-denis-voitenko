@@ -1,7 +1,7 @@
 package denvot.homework.bookService.services;
 
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
+
 import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,9 +26,9 @@ public class BooksServiceGetAllBooksTests {
   @Test
   public void testGetAllBooks() {
     var testBooks = List.of(
-            new Book(new BookId(1), "Джеффри Рихтер", "CLR via C#", Set.of("Записки сумасшедшего")),
-            new Book(new BookId(2), "Кент Бек", "TDD", Set.of("Записки гения")),
-            new Book(new BookId(3), "Джоан Роулинг", "Гарри Поттер", Set.of("Чьи-то записки")));
+            new Book(1L, "Джеффри Рихтер", "CLR via C#", Set.of("Записки сумасшедшего")),
+            new Book(2L, "Кент Бек", "TDD", Set.of("Записки гения")),
+            new Book(3L, "Джоан Роулинг", "Гарри Поттер", Set.of("Чьи-то записки")));
 
     when(repository.getAllBooks()).thenReturn(testBooks);
 

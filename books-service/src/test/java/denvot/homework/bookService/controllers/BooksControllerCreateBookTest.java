@@ -3,7 +3,6 @@ package denvot.homework.bookService.controllers;
 import denvot.homework.bookService.controllers.requests.BookCreationRequest;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import denvot.homework.bookService.services.BooksServiceBase;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,7 @@ class BooksControllerCreateBookTest {
   public void testSimpleCreation() throws InvalidBookDataException {
     when(booksService.createNew(any()))
             .thenReturn(
-                    new Book(new BookId(0), "Джеффри Рихтер", "CLR via C#", Set.of("Записки сумасшедшего")));
+                    new Book(0, "Джеффри Рихтер", "CLR via C#", Set.of("Записки сумасшедшего")));
 
     var bookCreationRequest = new BookCreationRequest("Джеффри Рихтер",
             "CLR via C#",

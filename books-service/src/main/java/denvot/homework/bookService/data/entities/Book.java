@@ -3,19 +3,19 @@ package denvot.homework.bookService.data.entities;
 import java.util.Set;
 
 public class Book {
-  private final BookId id;
+  private final long id;
   private String author;
   private String title;
   private Set<String> tags;
 
-  public Book(BookId id, String author, String title, Set<String> tags) {
+  public Book(long id, String author, String title, Set<String> tags) {
     this.id = id;
     this.author = author;
     this.title = title;
     this.tags = tags;
   }
 
-  public BookId getId() {
+  public long getId() {
     return id;
   }
 

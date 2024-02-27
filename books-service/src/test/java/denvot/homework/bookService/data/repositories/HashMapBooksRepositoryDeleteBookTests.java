@@ -1,7 +1,7 @@
 package denvot.homework.bookService.data.repositories;
 
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
+
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class HashMapBooksRepositoryDeleteBookTests {
-  private HashMap<BookId, Book> books;
+  private HashMap<Long, Book> books;
   private HashMapBooksRepository repository;
 
   @BeforeEach
@@ -22,7 +22,7 @@ public class HashMapBooksRepositoryDeleteBookTests {
 
   @Test
   public void testSimpleDeletion() throws BookNotFoundException {
-    var id = new BookId(1);
+    var id = 1L;
     var book = new Book(id, "Кент Бек", "TDD", new HashSet<>());
 
     books.put(id, book);
@@ -34,6 +34,6 @@ public class HashMapBooksRepositoryDeleteBookTests {
   @Test
   public void testDeletionOfBookNotExists() {
     Assertions.assertThrows(BookNotFoundException.class,
-            () -> repository.deleteBook(new BookId(1)));
+            () -> repository.deleteBook(1));
   }
 }

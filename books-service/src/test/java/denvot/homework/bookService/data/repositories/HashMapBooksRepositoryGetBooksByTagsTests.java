@@ -1,7 +1,7 @@
 package denvot.homework.bookService.data.repositories;
 
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class HashMapBooksRepositoryGetBooksByTagsTests {
-  private HashMap<BookId, Book> books;
+  private HashMap<Long, Book> books;
   private HashMapBooksRepository repository;
 
   @BeforeEach
@@ -24,7 +24,7 @@ public class HashMapBooksRepositoryGetBooksByTagsTests {
     var tags = new HashSet<String>();
     tags.add("Романы");
 
-    books.put(new BookId(1), new Book(null, null, null, tags));
+    books.put(1L, new Book(1, null, null, tags));
 
     Assertions.assertEquals(0, repository.getByTags(new HashSet<>()).size());
   }
@@ -34,7 +34,7 @@ public class HashMapBooksRepositoryGetBooksByTagsTests {
     var tags = new HashSet<String>();
     tags.add("Романы");
 
-    books.put(new BookId(1), new Book(null, null, null, new HashSet<>()));
+    books.put(1L, new Book(1, null, null, new HashSet<>()));
 
     Assertions.assertEquals(0, repository.getByTags(tags).size());
   }
@@ -49,9 +49,9 @@ public class HashMapBooksRepositoryGetBooksByTagsTests {
     queryTags.add("Романы");
 
     var booksTestData = new Book[] {
-            new Book(new BookId(1), "Кент Бек", "TDD", new HashSet<>()),
-            new Book(new BookId(2), "Пупу", "Роман", queryTags),
-            new Book(new BookId(3), "Пупу", "Роман-Триллер", originalTags),
+            new Book(1, "Кент Бек", "TDD", new HashSet<>()),
+            new Book(2, "Пупу", "Роман", queryTags),
+            new Book(3, "Пупу", "Роман-Триллер", originalTags),
     };
 
     for (Book book : booksTestData) {

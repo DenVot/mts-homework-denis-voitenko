@@ -2,7 +2,6 @@ package denvot.homework.bookService.controllers;
 
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.services.BooksServiceBase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,9 +28,9 @@ public class BooksControllerGetBookTest {
 
   @Test
   public void testSimpleGetBook() {
-    when(booksService.findBook(any()))
+    when(booksService.findBook(0))
             .thenReturn(Optional.of(
-                    new Book(new BookId(0), "Кент Бек", "TDD", Set.of("Записки гения"))));
+                    new Book(0, "Кент Бек", "TDD", Set.of("Записки гения"))));
 
     ResponseEntity<BookApiEntity> response = http.getForEntity("/api/books/{id}", BookApiEntity.class, Map.of("id", 0));
 
@@ -45,12 +43,12 @@ public class BooksControllerGetBookTest {
     assertEquals("Кент Бек", body.author());
     assertEquals("TDD", body.title());
     assertArrayEquals(new String[] {"Записки гения"}, body.tags());
-    verify(booksService).findBook(any());
+    verify(booksService).findBook(0);
   }
 
   @Test
   public void testBookNotFound() {
-    when(booksService.findBook(any())).thenReturn(Optional.empty());
+    when(booksService.findBook(0)).thenReturn(Optional.empty());
 
     ResponseEntity<BookApiEntity> response = http.getForEntity("/api/books/{id}", BookApiEntity.class, Map.of("id", 0));
 

@@ -2,7 +2,7 @@ package denvot.homework.bookService.controllers;
 
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
+
 import denvot.homework.bookService.services.BooksServiceBase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ public class BooksControllerGetBooksByTagsTest {
   @Test
   public void testGetByTags() {
     var books = new ArrayList<Book>();
-    books.add(new Book(new BookId(1), "Джеффри Рихтер", "CLR via C#", Set.of("SomeTag")));
-    books.add(new Book(new BookId(2), "Кент Бек", "TDD", Set.of("SomeTag")));
+    books.add(new Book(1, "Джеффри Рихтер", "CLR via C#", Set.of("SomeTag")));
+    books.add(new Book(2, "Кент Бек", "TDD", Set.of("SomeTag")));
 
     when(booksService.getBooksByTags(any())).thenReturn(books);
 

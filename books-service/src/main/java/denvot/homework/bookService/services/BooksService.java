@@ -1,7 +1,6 @@
 package denvot.homework.bookService.services;
 
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
@@ -33,7 +32,7 @@ public class BooksService implements BooksServiceBase {
   }
 
   @Override
-  public Optional<Book> findBook(BookId id) {
+  public Optional<Book> findBook(long id) {
     try {
       return Optional.of(booksRepository.findBook(id));
     } catch (BookNotFoundException e) {
@@ -42,7 +41,7 @@ public class BooksService implements BooksServiceBase {
   }
 
   @Override
-  public boolean deleteBook(BookId id) {
+  public boolean deleteBook(long id) {
     try {
       booksRepository.deleteBook(id);
       return true;
@@ -62,22 +61,22 @@ public class BooksService implements BooksServiceBase {
   }
 
   @Override
-  public Optional<Book> updateBookAuthor(BookId bookId, String newAuthorName) {
-    return updateBook(bookId, book -> book.setAuthor(newAuthorName));
+  public Optional<Book> updateBookAuthor(long id, String newAuthorName) {
+    return updateBook(id, book -> book.setAuthor(newAuthorName));
   }
 
   @Override
-  public Optional<Book> updateBookTitle(BookId bookId, String newTitle) {
-    return updateBook(bookId, book -> book.setTitle(newTitle));
+  public Optional<Book> updateBookTitle(long id, String newTitle) {
+    return updateBook(id, book -> book.setTitle(newTitle));
   }
 
   @Override
-  public Optional<Book> updateBookTags(BookId bookId, Set<String> newTags) {
-    return updateBook(bookId, book -> book.setTags(newTags));
+  public Optional<Book> updateBookTags(long id, Set<String> newTags) {
+    return updateBook(id, book -> book.setTags(newTags));
   }
 
-  private Optional<Book> updateBook(BookId bookId, Consumer<Book> update) {
-    var target = findBook(bookId);
+  private Optional<Book> updateBook(long id, Consumer<Book> update) {
+    var target = findBook(id);
     if (target.isEmpty()) return target;
 
     var targetBook = target.get();
