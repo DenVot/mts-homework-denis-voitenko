@@ -40,8 +40,11 @@ public class BooksControllerUpdateBookTest {
 
   @Test
   public void testUpdateWithChanges() {
-    when(booksService.updateBook(any(), any()))
-            .thenReturn(Optional.of(new Book(new BookId(1), "Кент Бек", "TDD", Set.of("Записки гения"))));
+    var testBook = Optional.of(new Book(new BookId(1), "Кент Бек", "TDD", Set.of("Записки гения")));
+
+    when(booksService.updateBookAuthor(any(), any())).thenReturn(testBook);
+    when(booksService.updateBookTags(any(), any())).thenReturn(testBook);
+    when(booksService.updateBookTitle(any(), any())).thenReturn(testBook);
 
     BookUpdateRequest updateRequest = new BookUpdateRequest("Джеффри Рихтер", "CLR via C#", new String[] {"Записки сумасшедшего"});
     HttpEntity<BookUpdateRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
@@ -56,14 +59,33 @@ public class BooksControllerUpdateBookTest {
     assertEquals("Кент Бек", body.author());
     assertEquals("TDD", body.title());
     assertArrayEquals(new String[] {"Записки гения"}, body.tags());
-    verify(booksService).updateBook(any(), any());
+    verify(booksService).updateBookAuthor(any(), any());
+    verify(booksService).updateBookTitle(any(), any());
+    verify(booksService).updateBookTags(any(), any());
   }
 
   @Test
   public void testUpdateNotFound() {
-    when(booksService.updateBook(any(), any())).thenReturn(Optional.empty());
+    when(booksService.updateBookAuthor(any(), any())).thenReturn(Optional.empty());
+    when(booksService.updateBookTags(any(), any())).thenReturn(Optional.empty());
+    when(booksService.updateBookTitle(any(), any())).thenReturn(Optional.empty());
 
     BookUpdateRequest updateRequest = new BookUpdateRequest("Джеффри Рихтер", "CLR via C#", new String[] {"Записки сумасшедшего"});
+    HttpEntity<BookUpdateRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
+    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{id}", HttpMethod.PATCH, updateRequestEntity, BookApiEntity.class, Map.of("id", 1));
+
+    assertTrue(response.getStatusCode().is4xxClientError());
+  }
+
+  @Test
+  public void testNoUpdate() {
+    var testBook = Optional.of(new Book(new BookId(1), "Кент Бек", "TDD", Set.of("Записки гения")));
+
+    when(booksService.updateBookAuthor(any(), any())).thenReturn(testBook);
+    when(booksService.updateBookTags(any(), any())).thenReturn(testBook);
+    when(booksService.updateBookTitle(any(), any())).thenReturn(testBook);
+    BookUpdateRequest updateRequest = new BookUpdateRequest(null, null, null);
+
     HttpEntity<BookUpdateRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
     ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{id}", HttpMethod.PATCH, updateRequestEntity, BookApiEntity.class, Map.of("id", 1));
 

@@ -31,36 +31,25 @@ public class BooksServiceUpdateBookTests {
 
     when(repository.findBook(any())).thenReturn(bookToEdit);
 
-    var bookDeltaAuthor = new BookUpdateBuilder()
-            .withAuthor("Кент Бек")
-            .build();
-    var bookDeltaTitle = new BookUpdateBuilder()
-            .withTitle("TDD")
-            .build();
-
-    var tags = new HashSet<String>();
-
-    var bookDeltaTags = new BookUpdateBuilder()
-            .withNewTags(tags)
-            .build();
-
-    Optional<Book> newBook = booksService.updateBook(new BookId(1), bookDeltaAuthor);
-
+    Optional<Book> newBook = booksService.updateBookAuthor(new BookId(1), "Кент Бек");
     Assertions.assertTrue(newBook.isPresent());
     Assertions.assertEquals(bookToEdit, newBook.get());
     Assertions.assertEquals("Кент Бек", newBook.get().getAuthor());
+
     bookToEdit = new Book(null, null, null, null);
     when(repository.findBook(any())).thenReturn(bookToEdit);
 
-    newBook = booksService.updateBook(new BookId(1), bookDeltaTitle);
+    newBook = booksService.updateBookTitle(new BookId(1), "TDD");
 
     Assertions.assertTrue(newBook.isPresent());
     Assertions.assertEquals(bookToEdit, newBook.get());
     Assertions.assertEquals("TDD", newBook.get().getTitle());
+
     bookToEdit = new Book(null, null, null, null);
     when(repository.findBook(any())).thenReturn(bookToEdit);
 
-    newBook = booksService.updateBook(new BookId(1), bookDeltaTags);
+    var tags = new HashSet<String>();
+    newBook = booksService.updateBookTags(new BookId(1), tags);
 
     Assertions.assertTrue(newBook.isPresent());
     Assertions.assertEquals(bookToEdit, newBook.get());
@@ -71,9 +60,7 @@ public class BooksServiceUpdateBookTests {
   public void testNotFoundUpdate() throws BookNotFoundException {
     when(repository.findBook(any())).thenThrow(new BookNotFoundException());
 
-    var update = new BookUpdateBuilder().build();
-
-    var newBook = booksService.updateBook(new BookId(1), update);
+    var newBook = booksService.updateBookAuthor(new BookId(1), "Кент Бек");
     Assertions.assertTrue(newBook.isEmpty());
   }
 }

@@ -7,10 +7,8 @@ import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundExce
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 
 @Service
 public class BooksService implements BooksServiceBase {
@@ -54,18 +52,6 @@ public class BooksService implements BooksServiceBase {
   }
 
   @Override
-  public Optional<Book> updateBook(BookId id, BookUpdatingStrategy updatingStrategy) {
-    var target = findBook(id);
-    if (target.isEmpty()) return target;
-
-    var targetBook = target.get();
-
-    updatingStrategy.update(targetBook);
-
-    return target;
-  }
-
-  @Override
   public ArrayList<Book> getBooksByTags(Set<String> tags) {
     return booksRepository.getByTags(tags);
   }
@@ -73,5 +59,31 @@ public class BooksService implements BooksServiceBase {
   @Override
   public List<Book> getAllBooks() {
     return booksRepository.getAllBooks();
+  }
+
+  @Override
+  public Optional<Book> updateBookAuthor(BookId bookId, String newAuthorName) {
+    return updateBook(bookId, book -> book.setAuthor(newAuthorName));
+  }
+
+  @Override
+  public Optional<Book> updateBookTitle(BookId bookId, String newTitle) {
+    return updateBook(bookId, book -> book.setTitle(newTitle));
+  }
+
+  @Override
+  public Optional<Book> updateBookTags(BookId bookId, Set<String> newTags) {
+    return updateBook(bookId, book -> book.setTags(newTags));
+  }
+
+  private Optional<Book> updateBook(BookId bookId, Consumer<Book> update) {
+    var target = findBook(bookId);
+    if (target.isEmpty()) return target;
+
+    var targetBook = target.get();
+
+    update.accept(targetBook);
+
+    return target;
   }
 }

@@ -3,19 +3,22 @@ package denvot.homework.bookService.controllers;
 import denvot.homework.bookService.controllers.requests.BookCreationRequest;
 import denvot.homework.bookService.controllers.requests.BookUpdateRequest;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
+import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import denvot.homework.bookService.services.BookCreationInfo;
-import denvot.homework.bookService.services.BookUpdateBuilder;
 import denvot.homework.bookService.services.BooksServiceBase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,24 +62,35 @@ public class BooksController {
   public ResponseEntity<BookApiEntity> updateBook(
           @PathVariable("id") int id,
           @RequestBody BookUpdateRequest updateRequest) {
-    var updateStrategyBuilder = new BookUpdateBuilder();
+    var bookId = new BookId(id);
+    Optional<Book> book = Optional.empty();
 
     if(updateRequest.newAuthor() != null) {
-      updateStrategyBuilder.withAuthor(updateRequest.newAuthor());
+      book = booksService.updateBookAuthor(bookId, updateRequest.newAuthor());
     }
 
     if (updateRequest.newTitle() != null) {
-      updateStrategyBuilder.withTitle(updateRequest.newTitle());
+      book = booksService.updateBookTitle(bookId, updateRequest.newTitle());
     }
 
     if (updateRequest.newTags() != null) {
-      updateStrategyBuilder.withNewTags(Set.of(updateRequest.newTags()));
+      book = booksService.updateBookTags(bookId, Set.of(updateRequest.newTags()));
     }
-
-    var updateStrategy = updateStrategyBuilder.build();
-    var book = booksService.updateBook(new BookId(id), updateStrategy);
 
     return book.map(value -> new ResponseEntity<>(BookApiEntity.fromBook(value), HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+  }
+
+  @GetMapping("/books")
+  public String getBooksView(Model model) {
+    var apiBooks = booksService.getAllBooks()
+            .stream()
+            .map(BookApiEntity::fromBook)
+            .sorted(Comparator.comparing(BookApiEntity::id))
+            .collect(Collectors.toList());
+
+    model.addAttribute("books", apiBooks);
+
+    return "books";
   }
 }
