@@ -1,11 +1,13 @@
 package denvot.homework.bookService.services;
 
-import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
+import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -13,22 +15,28 @@ import java.util.function.Consumer;
 @Service
 public class BooksService implements BooksServiceBase {
   private final BooksRepositoryBase booksRepository;
+  private final JpaAuthorsRepository jpaAuthorsRepository;
 
-  public BooksService(BooksRepositoryBase booksRepository) {
+  public BooksService(BooksRepositoryBase booksRepository, JpaAuthorsRepository jpaAuthorsRepository) {
     this.booksRepository = booksRepository;
+    this.jpaAuthorsRepository = jpaAuthorsRepository;
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED)
   public Book createNew(BookCreationInfo creationInfo) throws InvalidBookDataException {
     if (creationInfo.authorId() == null ||
             creationInfo.title() == null) {
       throw new InvalidBookDataException();
     }
 
-//    Author author = /*TODO;
+    var targetAuthor = jpaAuthorsRepository.findById(creationInfo.authorId());
 
-    //return booksRepository.createBook(author, creationInfo.title());
-    return null;
+    if (targetAuthor.isEmpty()) {
+      throw new InvalidBookDataException();
+    }
+
+    return booksRepository.createBook(targetAuthor.get(), creationInfo.title());
   }
 
   @Override
@@ -51,8 +59,8 @@ public class BooksService implements BooksServiceBase {
   }
 
   @Override
-  public List<Book> getBooksByTags(Set<String> tags) {
-    return booksRepository.getByTags(tags);
+  public List<Book> getBooksByTag(long tagId) {
+    return booksRepository.getByTag(tagId);
   }
 
   @Override

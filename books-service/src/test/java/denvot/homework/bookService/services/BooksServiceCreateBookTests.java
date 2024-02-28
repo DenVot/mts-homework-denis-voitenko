@@ -1,40 +1,58 @@
 package denvot.homework.bookService.services;
 
-import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
+import denvot.homework.bookService.DatabaseSuite;
+import denvot.homework.bookService.data.entities.Author;
+import denvot.homework.bookService.data.repositories.DbBooksRepository;
+import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
+import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.HashSet;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.*;
 
-class BooksServiceCreateBookTests {
-  /*private BooksRepositoryBase repository;
+@DataJpaTest
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Testcontainers
+@Import({BooksService.class, DbBooksRepository.class})
+class BooksServiceCreateBookTests extends DatabaseSuite {
+  @Autowired
+  private JpaAuthorsRepository jpaAuthorsRepository;
+
+  @Autowired
+  private JpaBooksRepository jpaBooksRepository;
+
+  @Autowired
   private BooksService booksService;
+
+  private Author testAuthor;
 
   @BeforeEach
   public void setUp() {
-    repository = mock(BooksRepositoryBase.class);
-    booksService = new BooksService(repository);
+    jpaBooksRepository.deleteAll();
+    jpaAuthorsRepository.deleteAll();
+    testAuthor = jpaAuthorsRepository.save(new Author("Test", "Author"));
   }
 
   @Test
-  public void testSimpleAddition() throws InvalidBookDataException {
-    var tags = new HashSet<String>();
-    tags.add("Романы");
-
+  public void testSimpleAddition() {
     BookCreationInfo info = new BookCreationInfo(
-            "Кент Бек",
-            "Экстремальное программирование. Разработка через тестирование",
-            tags);
+            testAuthor.getId(),
+            "Экстремальное программирование. Разработка через тестирование");
 
-    booksService.createNew(info);
-
-    verify(repository).createBook(any(), any(), any());
+    assertDoesNotThrow(() -> booksService.createNew(info));
+    assertEquals(1, jpaBooksRepository.findAll().size());
   }
 
   @Test
@@ -44,15 +62,9 @@ class BooksServiceCreateBookTests {
 
     BookCreationInfo infoWithNullAuthor = new BookCreationInfo(
             null,
-            "Экстремальное программирование. Разработка через тестирование",
-            tags);
+            "Экстремальное программирование. Разработка через тестирование");
     BookCreationInfo infoWithNullTitle = new BookCreationInfo(
-            "Кент Бек",
-            null,
-            tags);
-    BookCreationInfo infoWithNullTags = new BookCreationInfo(
-            "Кент Бек",
-            "Экстремальное программирование. Разработка через тестирование",
+            testAuthor.getId(),
             null);
 
     Assertions.assertThrows(InvalidBookDataException.class,
@@ -60,8 +72,15 @@ class BooksServiceCreateBookTests {
 
     Assertions.assertThrows(InvalidBookDataException.class,
             () -> booksService.createNew(infoWithNullTitle));
+  }
 
-    Assertions.assertThrows(InvalidBookDataException.class,
-            () -> booksService.createNew(infoWithNullTags));
-  }*/
+  @Test
+  public void testAdditionAuthorNotFound() {
+    BookCreationInfo info = new BookCreationInfo(
+            testAuthor.getId() + 1,
+            "Экстремальное программирование. Разработка через тестирование");
+
+    assertThrows(InvalidBookDataException.class, () -> booksService.createNew(info));
+    assertEquals(0, jpaBooksRepository.findAll().size());
+  }
 }
