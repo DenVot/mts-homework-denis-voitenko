@@ -113,7 +113,8 @@ public class BooksService implements BooksServiceBase {
     return targetTagOpt.flatMap(tag -> updateBook(bookId, book -> book.deassignTag(tag)));
   }
 
-  private Optional<Book> updateBook(long id, Consumer<Book> update) {
+  @Transactional(propagation = Propagation.REQUIRED)
+  public Optional<Book> updateBook(long id, Consumer<Book> update) {
     var target = findBook(id);
     if (target.isEmpty()) return target;
 
