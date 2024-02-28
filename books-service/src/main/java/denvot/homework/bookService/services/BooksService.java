@@ -90,13 +90,6 @@ public class BooksService implements BooksServiceBase {
     return updateBook(id, book -> book.setTitle(newTitle));
   }
 
-  // TODO: add/remove tags
-  @Override
-  @Transactional(propagation = Propagation.REQUIRED)
-  public Optional<Book> updateBookTags(long id, Set<String> newTags) {
-    return Optional.empty();
-  }
-
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
   public Optional<Book> addNewTag(Long bookId, Long tagId) {
