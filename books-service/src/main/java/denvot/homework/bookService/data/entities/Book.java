@@ -2,7 +2,9 @@ package denvot.homework.bookService.data.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static jakarta.persistence.CascadeType.PERSIST;
@@ -27,7 +29,7 @@ public class Book {
           joinColumns = @JoinColumn(name = "book_id"),
           inverseJoinColumns = @JoinColumn(name = "tag_id")
   )
-  private Set<Tag> tags;
+  private Set<Tag> tags = new HashSet<>();
 
   @NotNull
   @Column(name = "title", nullable = false, length = Integer.MAX_VALUE)
@@ -35,8 +37,9 @@ public class Book {
 
   protected Book() {}
 
-  public Book(String title) {
+  public Book(String title, Author author) {
     this.title = title;
+    this.author = author;
   }
 
   public Long getId() {
@@ -67,6 +70,7 @@ public class Book {
     return tags;
   }
 
+  @Transactional
   public void assignTag(Tag tag) {
     tags.add(tag);
   }

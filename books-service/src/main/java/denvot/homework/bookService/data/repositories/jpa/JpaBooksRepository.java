@@ -9,8 +9,7 @@ import java.util.List;
 public interface JpaBooksRepository extends JpaRepository<Book, Long> {
   @Query("""
     SELECT bt.book FROM BookTag bt
-    JOIN Book
     WHERE bt.id.tagId = :tagId
   """)
-  List<Book> findBooksByTagId(Long tagId);
+  List<Book> findBooksByTag(Long tagId);
 }
