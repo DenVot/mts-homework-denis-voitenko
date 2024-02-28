@@ -1,4 +1,4 @@
-package denvot.homework.bookService.services;
+package denvot.homework.bookService.services.books;
 
 import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.data.entities.Author;
@@ -6,6 +6,8 @@ import denvot.homework.bookService.data.repositories.DbBooksRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
+import denvot.homework.bookService.services.BookCreationInfo;
+import denvot.homework.bookService.services.BooksService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,9 +57,6 @@ class BooksServiceCreateBookTests extends DatabaseSuite {
 
   @Test
   public void testAdditionWhenSomethingNull() {
-    var tags = new HashSet<String>();
-    tags.add("Романы");
-
     BookCreationInfo infoWithNullAuthor = new BookCreationInfo(
             null,
             "Экстремальное программирование. Разработка через тестирование");

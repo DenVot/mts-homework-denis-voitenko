@@ -1,4 +1,4 @@
-package denvot.homework.bookService.services;
+package denvot.homework.bookService.services.books;
 
 import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.data.entities.Author;
@@ -8,6 +8,7 @@ import denvot.homework.bookService.data.repositories.DbBooksRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaTagsRepository;
+import denvot.homework.bookService.services.BooksService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

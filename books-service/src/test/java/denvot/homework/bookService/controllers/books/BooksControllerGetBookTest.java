@@ -1,4 +1,4 @@
-package denvot.homework.bookService.controllers;
+package denvot.homework.bookService.controllers.books;
 
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Author;
