@@ -8,7 +8,6 @@ import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import denvot.homework.bookService.services.BookCreationInfo;
 import denvot.homework.bookService.services.BooksServiceBase;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,17 +34,15 @@ public class BooksController {
   @PostMapping
   public BookApiEntity createBook(
           @Valid @RequestBody BookCreationRequest bookCreationRequest) throws InvalidBookDataException {
-    /*var bookResult = booksService.createNew(
-            new BookCreationInfo(bookCreationRequest.getAuthor(),
-                    bookCreationRequest.getTitle(),
-                    Set.of(bookCreationRequest.getTags())));*/
+    var bookResult = booksService.createNew(
+            new BookCreationInfo(bookCreationRequest.getAuthorId(), bookCreationRequest.getTitle()));
 
-    return null;
+    return BookApiEntity.fromBook(bookResult);
   }
 
   @GetMapping("/tags/{tag}")
-  public List<BookApiEntity> getBooksByTag(@PathVariable("tag") String tag) {
-    var books = booksService.getBooksByTags(Set.of(tag));
+  public List<BookApiEntity> getBooksByTag(@PathVariable("tag") long tagId) {
+    var books = booksService.getBooksByTag(tagId);
 
     return books.stream().map(BookApiEntity::fromBook).collect(Collectors.toList());
   }
@@ -65,7 +62,7 @@ public class BooksController {
     Optional<Book> book = Optional.empty();
 
     if(updateRequest.newAuthor() != null) {
-      book = booksService.updateBookAuthor(id, updateRequest.newAuthor());
+      book = booksService.updateBookAuthor(id, 0L /* TODO */);
     }
 
     if (updateRequest.newTitle() != null) {

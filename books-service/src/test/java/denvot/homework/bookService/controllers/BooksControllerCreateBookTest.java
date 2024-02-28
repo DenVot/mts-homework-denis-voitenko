@@ -1,41 +1,57 @@
 package denvot.homework.bookService.controllers;
 
+import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.controllers.requests.BookCreationRequest;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
+import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.exceptions.InvalidBookDataException;
-import denvot.homework.bookService.services.BooksServiceBase;
+import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
+import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Set;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class BooksControllerCreateBookTest {
-  @MockBean
-  private BooksServiceBase booksService;
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Testcontainers
+class BooksControllerCreateBookTest extends DatabaseSuite {
+  @Autowired
+  private JpaBooksRepository booksRepository;
+
+  @Autowired
+  private JpaAuthorsRepository authorsRepository;
 
   @Autowired
   private TestRestTemplate http;
 
-  /*@Test
-  public void testSimpleCreation() throws InvalidBookDataException {
-    when(booksService.createNew(any()))
-            .thenReturn(
-                    new Book(0, "Джеффри Рихтер", "CLR via C#", Set.of("Записки сумасшедшего")));
+  private Book testBook;
+  private Author testAuthor;
 
-    var bookCreationRequest = new BookCreationRequest("Джеффри Рихтер",
-            "CLR via C#",
-            new String[] {"Записки сумасшедшего"});
+  @BeforeEach
+  public void setUp() {
+    booksRepository.deleteAll();
+    authorsRepository.deleteAll();
+
+    testAuthor = new Author("Test", "Author");
+    authorsRepository.save(testAuthor);
+
+    testBook = new Book("Test Book", testAuthor);
+    booksRepository.save(testBook);
+  }
+
+  @Test
+  public void testSimpleCreation() {
+    var bookCreationRequest = new BookCreationRequest(testAuthor.getId(), testBook.getTitle());
 
     ResponseEntity<BookApiEntity> response = http.postForEntity("/api/books", bookCreationRequest, BookApiEntity.class);
 
@@ -45,34 +61,21 @@ class BooksControllerCreateBookTest {
     BookApiEntity result = response.getBody();
 
     assertNotNull(result);
-    assertEquals("Джеффри Рихтер", result.author());
-    assertEquals("CLR via C#", result.title());
-    assertArrayEquals(new String[] {"Записки сумасшедшего"}, result.tags());
-    verify(booksService).createNew(any());
+    assertEquals(testAuthor.getId(), result.author().id());
+    assertEquals(testBook.getTitle(), result.title());
   }
 
   @Test
   public void testCreationWithNullAuthorField() {
     var bookCreationRequest = new BookCreationRequest(null,
-            "CLR via C#",
-            new String[] {"Записки сумасшедшего"});
+            "CLR via C#");
 
     testMust4xxError(bookCreationRequest);
   }
 
   @Test
   public void testCreationWithNullTitleField() {
-    var bookCreationRequest = new BookCreationRequest("Джеффри Рихтер",
-            null,
-            new String[] {"Записки сумасшедшего"});
-
-    testMust4xxError(bookCreationRequest);
-  }
-
-  @Test
-  public void testCreationWithNullTagsField() {
-    var bookCreationRequest = new BookCreationRequest("Джеффри Рихтер",
-            "CLR via C#",
+    var bookCreationRequest = new BookCreationRequest(0L,
             null);
 
     testMust4xxError(bookCreationRequest);
@@ -82,5 +85,5 @@ class BooksControllerCreateBookTest {
     ResponseEntity<BookApiEntity> response = http.postForEntity("/api/books", request, BookApiEntity.class);
 
     assertTrue(response.getStatusCode().is4xxClientError());
-  }*/
+  }
 }

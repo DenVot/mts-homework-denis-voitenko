@@ -4,30 +4,21 @@ import jakarta.validation.constraints.NotNull;
 
 public class BookCreationRequest {
   @NotNull
-  private final String author;
+  private final Long authorId;
 
   @NotNull
   private final String title;
 
-  @NotNull
-  private final String[] tags;
-
-  public BookCreationRequest(String author, String title, String[] tags) {
-
-    this.author = author;
+  public BookCreationRequest(Long authorId, String title) {
     this.title = title;
-    this.tags = tags;
+    this.authorId = authorId;
   }
 
-  public String getAuthor() {
-    return author;
+  public Long getAuthorId() {
+    return authorId;
   }
 
   public String getTitle() {
     return title;
-  }
-
-  public String[] getTags() {
-    return tags;
   }
 }
