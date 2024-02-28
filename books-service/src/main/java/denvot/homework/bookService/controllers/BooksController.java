@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -40,7 +39,7 @@ public class BooksController {
     return BookApiEntity.fromBook(bookResult);
   }
 
-  @GetMapping("/tags/{tag}")
+  @GetMapping("tags/{tag}")
   public List<BookApiEntity> getBooksByTag(@PathVariable("tag") long tagId) {
     var books = booksService.getBooksByTag(tagId);
 
@@ -48,7 +47,7 @@ public class BooksController {
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<BookApiEntity> getBook(@PathVariable("id") int id) {
+  public ResponseEntity<BookApiEntity> getBook(@PathVariable("id") long id) {
     var book = booksService.findBook(id);
 
     return book.map(value -> new ResponseEntity<>(BookApiEntity.fromBook(value), HttpStatus.OK))
@@ -57,23 +56,47 @@ public class BooksController {
 
   @PatchMapping("{id}")
   public ResponseEntity<BookApiEntity> updateBook(
-          @PathVariable("id") int id,
+          @PathVariable("id") long id,
           @RequestBody BookUpdateRequest updateRequest) {
     Optional<Book> book = Optional.empty();
 
-    if(updateRequest.newAuthor() != null) {
-      book = booksService.updateBookAuthor(id, 0L /* TODO */);
+    if(updateRequest.newAuthorId() != null) {
+      book = booksService.updateBookAuthor(id, updateRequest.newAuthorId());
     }
 
     if (updateRequest.newTitle() != null) {
       book = booksService.updateBookTitle(id, updateRequest.newTitle());
     }
 
-    if (updateRequest.newTags() != null) {
-      book = booksService.updateBookTags(id, Set.of(updateRequest.newTags()));
+    return book.map(value -> new ResponseEntity<>(BookApiEntity.fromBook(value), HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+  }
+
+  @PatchMapping("{book_id}/tags/{tag_id}")
+  public ResponseEntity<BookApiEntity> addTagToBook(
+          @PathVariable("book_id") long bookId,
+          @PathVariable("tag_id") long tagId) {
+    var targetBook = booksService.addNewTag(bookId, tagId);
+
+    if (targetBook.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    return book.map(value -> new ResponseEntity<>(BookApiEntity.fromBook(value), HttpStatus.OK))
+    return targetBook.map(value -> new ResponseEntity<>(BookApiEntity.fromBook(value), HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+  }
+
+  @DeleteMapping("{book_id}/tags/{tag_id}")
+  public ResponseEntity<BookApiEntity> removeTagFromBook(
+          @PathVariable("book_id") long bookId,
+          @PathVariable("tag_id") long tagId) {
+    var targetBook = booksService.removeTag(bookId, tagId);
+
+    if (targetBook.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    return targetBook.map(value -> new ResponseEntity<>(BookApiEntity.fromBook(value), HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
   }
 

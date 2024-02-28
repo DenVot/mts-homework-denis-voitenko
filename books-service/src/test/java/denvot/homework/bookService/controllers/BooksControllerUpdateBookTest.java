@@ -2,13 +2,16 @@ package denvot.homework.bookService.controllers;
 
 import denvot.homework.bookService.controllers.requests.BookUpdateRequest;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
+import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.services.BooksServiceBase;
+import denvot.homework.bookService.data.entities.Tag;
+import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
+import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
+import denvot.homework.bookService.data.repositories.jpa.JpaTagsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -16,39 +19,45 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BooksControllerUpdateBookTest {
-  @MockBean
-  private BooksServiceBase booksService;
+  @Autowired
+  private JpaBooksRepository booksRepository;
+
+  @Autowired
+  private JpaAuthorsRepository authorsRepository;
 
   @Autowired
   private TestRestTemplate http;
 
+  @Autowired
+  private JpaTagsRepository tagsRepository;
+
+  private Book testBook;
+  private Author testAuthor;
+
   @BeforeEach
   public void setUp() {
+    booksRepository.deleteAll();
+    authorsRepository.deleteAll();
+    tagsRepository.deleteAll();
+
+    testAuthor = new Author("Test", "Author");
+    authorsRepository.save(testAuthor);
+
+    testBook = new Book("Test Book", testAuthor);
+    booksRepository.save(testBook);
     http.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
   }
 
-  /*@Test
+  @Test
   public void testUpdateWithChanges() {
-    var testBook = Optional.of(new Book(1, "Кент Бек", "TDD", Set.of("Записки гения")));
-
-    when(booksService.updateBookAuthor(anyLong(), any())).thenReturn(testBook);
-    when(booksService.updateBookTags(anyLong(), any())).thenReturn(testBook);
-    when(booksService.updateBookTitle(anyLong(), any())).thenReturn(testBook);
-
-    BookUpdateRequest updateRequest = new BookUpdateRequest("Джеффри Рихтер", "CLR via C#", new String[] {"Записки сумасшедшего"});
+    BookUpdateRequest updateRequest = new BookUpdateRequest(testAuthor.getId(), "CLR via C#");
     HttpEntity<BookUpdateRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
-    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{id}", HttpMethod.PATCH, updateRequestEntity, BookApiEntity.class, Map.of("id", 1));
+    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{id}", HttpMethod.PATCH, updateRequestEntity, BookApiEntity.class, Map.of("id", testBook.getId()));
 
     assertTrue(response.getStatusCode().is2xxSuccessful());
     assertTrue(response.hasBody());
@@ -56,39 +65,108 @@ public class BooksControllerUpdateBookTest {
     BookApiEntity body = response.getBody();
 
     assertNotNull(body);
-    assertEquals("Кент Бек", body.author());
-    assertEquals("TDD", body.title());
-    assertArrayEquals(new String[] {"Записки гения"}, body.tags());
-    verify(booksService).updateBookAuthor(anyLong(), any());
-    verify(booksService).updateBookTitle(anyLong(), any());
-    verify(booksService).updateBookTags(anyLong(), any());
+    assertEquals(testAuthor.getId(), body.author().id());
+    assertEquals("CLR via C#", body.title());
   }
 
   @Test
   public void testUpdateNotFound() {
-    when(booksService.updateBookAuthor(anyLong(), any())).thenReturn(Optional.empty());
-    when(booksService.updateBookTags(anyLong(), any())).thenReturn(Optional.empty());
-    when(booksService.updateBookTitle(anyLong(), any())).thenReturn(Optional.empty());
-
-    BookUpdateRequest updateRequest = new BookUpdateRequest("Джеффри Рихтер", "CLR via C#", new String[] {"Записки сумасшедшего"});
+    BookUpdateRequest updateRequest = new BookUpdateRequest(1L, "CLR via C#");
     HttpEntity<BookUpdateRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
-    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{id}", HttpMethod.PATCH, updateRequestEntity, BookApiEntity.class, Map.of("id", 1));
+    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{id}", HttpMethod.PATCH, updateRequestEntity, BookApiEntity.class, Map.of("id", testBook.getId() + 1));
 
     assertTrue(response.getStatusCode().is4xxClientError());
   }
 
   @Test
   public void testNoUpdate() {
-    var testBook = Optional.of(new Book(1, "Кент Бек", "TDD", Set.of("Записки гения")));
-
-    when(booksService.updateBookAuthor(anyLong(), any())).thenReturn(testBook);
-    when(booksService.updateBookTags(anyLong(), any())).thenReturn(testBook);
-    when(booksService.updateBookTitle(anyLong(), any())).thenReturn(testBook);
-    BookUpdateRequest updateRequest = new BookUpdateRequest(null, null, null);
+    BookUpdateRequest updateRequest = new BookUpdateRequest(null, null);
 
     HttpEntity<BookUpdateRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
-    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{id}", HttpMethod.PATCH, updateRequestEntity, BookApiEntity.class, Map.of("id", 1));
+    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{id}", HttpMethod.PATCH, updateRequestEntity, BookApiEntity.class, Map.of("id", testBook.getId()));
 
     assertTrue(response.getStatusCode().is4xxClientError());
-  }*/
+  }
+
+  @Test
+  public void testUpdateNewTag() {
+    Tag testTag = new Tag("Test Tag");
+    tagsRepository.save(testTag);
+
+    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{book_id}/tags/{tag_id}", HttpMethod.PATCH,
+            null, BookApiEntity.class, Map.of("book_id", testBook.getId(), "tag_id", testTag.getId()));
+
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+    assertTrue(response.hasBody());
+
+    BookApiEntity body = response.getBody();
+
+    assertNotNull(body);
+    assertEquals(testAuthor.getId(), body.author().id());
+    assertEquals(1, body.tags().size());
+    assertEquals(testTag.getId(), body.tags().get(0).id());
+  }
+
+  @Test
+  public void testUpdateNewTagTargetEntitiesNotFound() {
+    Tag testTag = new Tag("Test Tag");
+    tagsRepository.save(testTag);
+
+    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{book_id}/tags/{tag_id}", HttpMethod.PATCH,
+            null, BookApiEntity.class, Map.of("book_id", testBook.getId(), "tag_id", testTag.getId() + 1));
+
+    assertTrue(response.getStatusCode().is4xxClientError());
+
+    response = http.exchange("/api/books/{book_id}/tags/{tag_id}", HttpMethod.PATCH,
+            null, BookApiEntity.class, Map.of("book_id", testBook.getId() + 1, "tag_id", testTag.getId()));
+
+    assertTrue(response.getStatusCode().is4xxClientError());
+
+    response = http.exchange("/api/books/{book_id}/tags/{tag_id}", HttpMethod.PATCH,
+            null, BookApiEntity.class, Map.of("book_id", testBook.getId() + 1, "tag_id", testTag.getId() + 1));
+
+    assertTrue(response.getStatusCode().is4xxClientError());
+  }
+
+  @Test
+  public void testUpdateRemoveTag() {
+    Tag testTag = new Tag("Test Tag");
+    tagsRepository.save(testTag);
+
+    testBook.assignTag(testTag);
+    booksRepository.save(testBook);
+
+    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{book_id}/tags/{tag_id}", HttpMethod.DELETE,
+            null, BookApiEntity.class, Map.of("book_id", testBook.getId(), "tag_id", testTag.getId()));
+
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+    assertTrue(response.hasBody());
+
+    BookApiEntity body = response.getBody();
+
+    assertNotNull(body);
+    assertEquals(testAuthor.getId(), body.author().id());
+    assertEquals(0, body.tags().size());
+  }
+
+  @Test
+  public void testUpdateRemoveTagTargetEntitiesNotFound() {
+    Tag testTag = new Tag("Test Tag");
+    tagsRepository.save(testTag);
+
+    ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{book_id}/tags/{tag_id}", HttpMethod.DELETE,
+            null, BookApiEntity.class, Map.of("book_id", testBook.getId(), "tag_id", testTag.getId() + 1));
+
+    assertTrue(response.getStatusCode().is4xxClientError());
+
+    response = http.exchange("/api/books/{book_id}/tags/{tag_id}", HttpMethod.DELETE,
+            null, BookApiEntity.class, Map.of("book_id", testBook.getId() + 1, "tag_id", testTag.getId()));
+
+    assertTrue(response.getStatusCode().is4xxClientError());
+
+    response = http.exchange("/api/books/{book_id}/tags/{tag_id}", HttpMethod.DELETE,
+            null, BookApiEntity.class, Map.of("book_id", testBook.getId() + 1, "tag_id", testTag.getId() + 1));
+
+    assertTrue(response.getStatusCode().is4xxClientError());
+  }
 }
