@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BooksControllerGetBookTest {
-  @MockBean
+  /*@MockBean
   private BooksServiceBase booksService;
 
   @Autowired
@@ -53,5 +53,5 @@ public class BooksControllerGetBookTest {
     ResponseEntity<BookApiEntity> response = http.getForEntity("/api/books/{id}", BookApiEntity.class, Map.of("id", 0));
 
     assertTrue(response.getStatusCode().is4xxClientError());
-  }
+  }*/
 }

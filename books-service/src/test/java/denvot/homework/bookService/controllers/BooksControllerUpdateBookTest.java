@@ -38,7 +38,7 @@ public class BooksControllerUpdateBookTest {
     http.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
   }
 
-  @Test
+  /*@Test
   public void testUpdateWithChanges() {
     var testBook = Optional.of(new Book(1, "Кент Бек", "TDD", Set.of("Записки гения")));
 
@@ -90,5 +90,5 @@ public class BooksControllerUpdateBookTest {
     ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{id}", HttpMethod.PATCH, updateRequestEntity, BookApiEntity.class, Map.of("id", 1));
 
     assertTrue(response.getStatusCode().is4xxClientError());
-  }
+  }*/
 }

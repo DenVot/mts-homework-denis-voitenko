@@ -1,19 +1,25 @@
 package denvot.homework.bookService.data.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "tags", schema = "books_service")
+@Table(name = "tags")
 public class Tag {
   @Id
-  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", nullable = false)
   private Long id;
 
-  @Column(name = "name", length = Integer.MAX_VALUE)
+  @NotNull
+  @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)
   private String name;
+
+  protected Tag() {}
+
+  public Tag(String name) {
+    this.name = name;
+  }
 
   public Long getId() {
     return id;

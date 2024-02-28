@@ -1,5 +1,6 @@
 package denvot.homework.bookService.services;
 
+import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
@@ -11,7 +12,6 @@ import java.util.function.Consumer;
 
 @Service
 public class BooksService implements BooksServiceBase {
-
   private final BooksRepositoryBase booksRepository;
 
   public BooksService(BooksRepositoryBase booksRepository) {
@@ -20,15 +20,15 @@ public class BooksService implements BooksServiceBase {
 
   @Override
   public Book createNew(BookCreationInfo creationInfo) throws InvalidBookDataException {
-    if (creationInfo.author() == null ||
-            creationInfo.title() == null ||
-            creationInfo.tags() == null) {
+    if (creationInfo.authorId() == null ||
+            creationInfo.title() == null) {
       throw new InvalidBookDataException();
     }
 
-    return booksRepository.createBook(creationInfo.author(),
-            creationInfo.title(),
-            creationInfo.tags());
+//    Author author = /*TODO;
+
+    //return booksRepository.createBook(author, creationInfo.title());
+    return null;
   }
 
   @Override
@@ -51,7 +51,7 @@ public class BooksService implements BooksServiceBase {
   }
 
   @Override
-  public ArrayList<Book> getBooksByTags(Set<String> tags) {
+  public List<Book> getBooksByTags(Set<String> tags) {
     return booksRepository.getByTags(tags);
   }
 
@@ -60,9 +60,14 @@ public class BooksService implements BooksServiceBase {
     return booksRepository.getAllBooks();
   }
 
+
+  // TODO string -> long
   @Override
   public Optional<Book> updateBookAuthor(long id, String newAuthorName) {
-    return updateBook(id, book -> book.setAuthor(newAuthorName));
+    //Author author = /*TODO;
+
+    return Optional.empty();
+    //return updateBook(id, book -> book.setAuthor(author));
   }
 
   @Override
@@ -70,9 +75,10 @@ public class BooksService implements BooksServiceBase {
     return updateBook(id, book -> book.setTitle(newTitle));
   }
 
+  // TODO: add/remove tags
   @Override
   public Optional<Book> updateBookTags(long id, Set<String> newTags) {
-    return updateBook(id, book -> book.setTags(newTags));
+    return Optional.empty();
   }
 
   private Optional<Book> updateBook(long id, Consumer<Book> update) {

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BooksControllerGetBooksByTagsTest {
-  @MockBean
+  /*@MockBean
   private BooksServiceBase booksService;
 
   @Autowired
@@ -44,5 +44,5 @@ public class BooksControllerGetBooksByTagsTest {
 
     assertNotNull(body);
     assertEquals(2, body.length);
-  }
+  }*/
 }

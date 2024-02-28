@@ -3,25 +3,21 @@ package denvot.homework.bookService.data.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.List;
-
 @Entity
-@Table(name = "authors", schema = "books_service")
+@Table(name = "authors")
 public class Author {
   @Id
-  @NotNull
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
   private Long id;
 
-  @Column(name = "first_name", length = Integer.MAX_VALUE)
+  @NotNull
+  @Column(name = "first_name", nullable = false, length = Integer.MAX_VALUE)
   private String firstName;
 
-  @Column(name = "last_name", length = Integer.MAX_VALUE)
+  @NotNull
+  @Column(name = "last_name", nullable = false, length = Integer.MAX_VALUE)
   private String lastName;
-
-  @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumn(name = "author_id")
-  private List<Book> books;
 
   public Long getId() {
     return id;
@@ -47,11 +43,4 @@ public class Author {
     this.lastName = lastName;
   }
 
-  public List<Book> getBooks() {
-    return books;
-  }
-
-  public void assignNewBook(Book book) {
-    books.add(book);
-  }
 }

@@ -1,6 +1,7 @@
 package denvot.homework.bookService.data.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
 
@@ -8,19 +9,16 @@ import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
-@Table(name = "books", schema = "books_service")
+@Table(name = "books")
 public class Book {
   @Id
-  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", nullable = false)
   private Long id;
 
-  @Column(name = "author_id")
-  private Long authorId;
-
-  @Column(name = "title", length = Integer.MAX_VALUE)
-  private String title;
-
-  @ManyToOne(fetch = LAZY)
+  @NotNull
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "author_id", nullable = false)
   private Author author;
 
   @ManyToMany(fetch = LAZY, cascade = PERSIST)
@@ -31,20 +29,22 @@ public class Book {
   )
   private Set<Tag> tags;
 
+  @NotNull
+  @Column(name = "title", nullable = false, length = Integer.MAX_VALUE)
+  private String title;
+
+  protected Book() {}
+
+  public Book(String title) {
+    this.title = title;
+  }
+
   public Long getId() {
     return id;
   }
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public Long getAuthorId() {
-    return authorId;
-  }
-
-  public void setAuthorId(Long authorId) {
-    this.authorId = authorId;
   }
 
   public String getTitle() {

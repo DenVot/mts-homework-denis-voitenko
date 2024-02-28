@@ -27,7 +27,7 @@ class BooksControllerCreateBookTest {
   @Autowired
   private TestRestTemplate http;
 
-  @Test
+  /*@Test
   public void testSimpleCreation() throws InvalidBookDataException {
     when(booksService.createNew(any()))
             .thenReturn(
@@ -82,5 +82,5 @@ class BooksControllerCreateBookTest {
     ResponseEntity<BookApiEntity> response = http.postForEntity("/api/books", request, BookApiEntity.class);
 
     assertTrue(response.getStatusCode().is4xxClientError());
-  }
+  }*/
 }

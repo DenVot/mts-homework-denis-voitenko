@@ -12,7 +12,7 @@ public interface BooksServiceBase {
 
   boolean deleteBook(long id);
 
-  ArrayList<Book> getBooksByTags(Set<String> tags);
+  List<Book> getBooksByTags(Set<String> tags);
 
   List<Book> getAllBooks();
 

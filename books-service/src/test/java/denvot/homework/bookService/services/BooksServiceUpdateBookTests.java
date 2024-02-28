@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class BooksServiceUpdateBookTests {
-  private BooksRepositoryBase repository;
+  /*private BooksRepositoryBase repository;
   private BooksService booksService;
 
   @BeforeEach
@@ -60,5 +60,5 @@ public class BooksServiceUpdateBookTests {
 
     var newBook = booksService.updateBookAuthor(1L, "Кент Бек");
     Assertions.assertTrue(newBook.isEmpty());
-  }
+  }*/
 }

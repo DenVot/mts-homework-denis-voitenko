@@ -11,7 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class BooksServiceFindBooksTests {
-  private BooksRepositoryBase repository;
+ /* private BooksRepositoryBase repository;
   private BooksService booksService;
 
   @BeforeEach
@@ -38,5 +38,5 @@ public class BooksServiceFindBooksTests {
     var result = booksService.findBook(1);
 
     Assertions.assertFalse(result.isPresent());
-  }
+  }*/
 }

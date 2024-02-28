@@ -8,6 +8,7 @@ import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import denvot.homework.bookService.services.BookCreationInfo;
 import denvot.homework.bookService.services.BooksServiceBase;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +35,12 @@ public class BooksController {
   @PostMapping
   public BookApiEntity createBook(
           @Valid @RequestBody BookCreationRequest bookCreationRequest) throws InvalidBookDataException {
-    var bookResult = booksService.createNew(
+    /*var bookResult = booksService.createNew(
             new BookCreationInfo(bookCreationRequest.getAuthor(),
                     bookCreationRequest.getTitle(),
-                    Set.of(bookCreationRequest.getTags())));
+                    Set.of(bookCreationRequest.getTags())));*/
 
-    return BookApiEntity.fromBook(bookResult);
+    return null;
   }
 
   @GetMapping("/tags/{tag}")

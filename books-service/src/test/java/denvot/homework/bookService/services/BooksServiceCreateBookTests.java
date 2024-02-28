@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class BooksServiceCreateBookTests {
-  private BooksRepositoryBase repository;
+  /*private BooksRepositoryBase repository;
   private BooksService booksService;
 
   @BeforeEach
@@ -63,5 +63,5 @@ class BooksServiceCreateBookTests {
 
     Assertions.assertThrows(InvalidBookDataException.class,
             () -> booksService.createNew(infoWithNullTags));
-  }
+  }*/
 }

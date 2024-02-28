@@ -2,6 +2,7 @@ package denvot.homework.bookService.data.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.Hibernate;
 
 import java.io.Serializable;
@@ -9,11 +10,13 @@ import java.util.Objects;
 
 @Embeddable
 public class BookTagId implements Serializable {
-  private static final long serialVersionUID = 5611374495873539112L;
-  @Column(name = "book_id")
+  private static final long serialVersionUID = 4509413700289921245L;
+  @NotNull
+  @Column(name = "book_id", nullable = false)
   private Long bookId;
 
-  @Column(name = "tag_id")
+  @NotNull
+  @Column(name = "tag_id", nullable = false)
   private Long tagId;
 
   public Long getBookId() {

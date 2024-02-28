@@ -57,11 +57,11 @@
 			<version>2.21.0</version>
 		</dependency>
 
-        <!--suppress VulnerableLibrariesLocal -->
+		<!--suppress VulnerableLibrariesLocal -->
 		<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
