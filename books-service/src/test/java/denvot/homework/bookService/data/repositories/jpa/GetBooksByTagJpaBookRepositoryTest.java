@@ -16,7 +16,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
-class GetBooksByTagJpaBookRepositoryTest {
+class GetBooksByTagJpaBookRepositoryTest extends DatabaseSuite {
 
   /*@Autowired
   private JpaBooksRepository booksRepo;
@@ -26,16 +26,6 @@ class GetBooksByTagJpaBookRepositoryTest {
 
   @Autowired
   private JpaTagsRepository tagsRepo;*/
-
-  @Container
-  public static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:13");
-
-  @DynamicPropertySource
-  static void setProperties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-    registry.add("spring.datasource.username", POSTGRES::getUsername);
-    registry.add("spring.datasource.password", POSTGRES::getPassword);
-  }
 
 
   @Test
