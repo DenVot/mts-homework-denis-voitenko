@@ -2,9 +2,9 @@ package denvot.homework.bookService.data.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static jakarta.persistence.CascadeType.PERSIST;
@@ -25,9 +25,9 @@ public class Book {
 
   @ManyToMany(fetch = LAZY, cascade = PERSIST)
   @JoinTable(
-          name = "books_tags",
-          joinColumns = @JoinColumn(name = "book_id"),
-          inverseJoinColumns = @JoinColumn(name = "tag_id")
+      name = "books_tags",
+      joinColumns = @JoinColumn(name = "book_id"),
+      inverseJoinColumns = @JoinColumn(name = "tag_id")
   )
   private Set<Tag> tags = new HashSet<>();
 
@@ -70,8 +70,11 @@ public class Book {
     return tags;
   }
 
-  @Transactional
   public void assignTag(Tag tag) {
     tags.add(tag);
+  }
+
+  public void deassignTag(Tag tag) {
+    tags.removeIf(pTag -> Objects.equals(pTag.getId(), tag.getId()));
   }
 }
