@@ -24,4 +24,11 @@ public class TagsService {
 
     return jpaTagsRepository.save(new Tag(tagName));
   }
+
+  @Transactional(propagation = Propagation.REQUIRED)
+  public boolean deleteTag(long id) {
+    jpaTagsRepository.deleteById(id);
+
+    return !jpaTagsRepository.existsById(id);
+  }
 }
