@@ -3,8 +3,8 @@ package denvot.homework.bookService.services.tags;
 import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.data.entities.Tag;
 import denvot.homework.bookService.data.repositories.jpa.JpaTagsRepository;
-import denvot.homework.bookService.exceptions.TagAlreadyExistsException;
 import denvot.homework.bookService.services.TagsService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +17,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-
 @DataJpaTest
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
 @Import(TagsService.class)
-public class TagsServiceRenameTagTest extends DatabaseSuite {
+public class TagServiceFindTagTest extends DatabaseSuite {
   @Autowired
   private JpaTagsRepository tagsRepository;
 
@@ -37,23 +34,23 @@ public class TagsServiceRenameTagTest extends DatabaseSuite {
   @BeforeEach
   public void setUp() {
     tagsRepository.deleteAll();
-    testTag = tagsRepository.save(new Tag("Test"));
+
+    testTag = new Tag("Test");
+    tagsRepository.save(testTag);
   }
 
   @Test
-  public void testRename() throws TagAlreadyExistsException {
-    Optional<Tag> target = tagsService.rename(testTag.getId(), "Renamed");
+  public void testSimpleFind() {
+    Optional<Tag> result = tagsService.findTag(testTag.getId());
 
-    assertTrue(target.isPresent());
-    assertEquals(testTag.getId(), target.get().getId());
-    assertEquals("Renamed", target.get().getName());
+    Assertions.assertTrue(result.isPresent());
+    Assertions.assertEquals(testTag.getId(), result.get().getId());
   }
 
   @Test
-  public void testRenameAlreadyExists() {
-    var anotherTag = new Tag("Another tag");
-    tagsRepository.save(anotherTag);
+  public void testEmptyBook() {
+    var result = tagsService.findTag(testTag.getId() + 1);
 
-    assertThrows(TagAlreadyExistsException.class, () -> tagsService.rename(anotherTag.getId(), "Test"));
+    Assertions.assertFalse(result.isPresent());
   }
 }

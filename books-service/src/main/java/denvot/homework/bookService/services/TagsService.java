@@ -51,4 +51,9 @@ public class TagsService {
     targetTag.setName(newName);
     return target;
   }
+
+  @Transactional(propagation = Propagation.REQUIRED)
+  public Optional<Tag> findTag(Long id) {
+    return jpaTagsRepository.findById(id);
+  }
 }
