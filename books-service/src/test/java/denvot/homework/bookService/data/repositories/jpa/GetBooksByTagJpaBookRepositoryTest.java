@@ -4,6 +4,7 @@ import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.entities.Tag;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -29,6 +30,10 @@ class GetBooksByTagJpaBookRepositoryTest extends DatabaseSuite {
   @Autowired
   private JpaTagsRepository tagsRepo;
 
+  @BeforeEach
+  public void setUp() {
+    tagsRepo.deleteAll();
+  }
 
   @Test
   public void testFilterByTag() {
