@@ -1,45 +1,80 @@
 package denvot.homework.bookService.data.entities;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-public class Book {
-  private final BookId id;
-  private String author;
-  private String title;
-  private Set<String> tags;
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.FetchType.LAZY;
 
-  public Book(BookId id, String author, String title, Set<String> tags) {
-    this.id = id;
-    this.author = author;
+@Entity
+@Table(name = "books")
+public class Book {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", nullable = false)
+  private Long id;
+
+  @NotNull
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "author_id", nullable = false)
+  private Author author;
+
+  @ManyToMany(fetch = LAZY, cascade = PERSIST)
+  @JoinTable(
+      name = "books_tags",
+      joinColumns = @JoinColumn(name = "book_id"),
+      inverseJoinColumns = @JoinColumn(name = "tag_id")
+  )
+  private Set<Tag> tags = new HashSet<>();
+
+  @NotNull
+  @Column(name = "title", nullable = false, length = Integer.MAX_VALUE)
+  private String title;
+
+  protected Book() {}
+
+  public Book(String title, Author author) {
     this.title = title;
-    this.tags = tags;
+    this.author = author;
   }
 
-  public BookId getId() {
+  public Long getId() {
     return id;
   }
 
-  public String getAuthor() {
-    return author;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getTitle() {
     return title;
   }
 
-  public Set<String> getTags() {
-    return tags;
-  }
-
-  public void setAuthor(String author) {
-    this.author = author;
-  }
-
   public void setTitle(String title) {
     this.title = title;
   }
 
-  public void setTags(Set<String> tags) {
-    this.tags = tags;
+  public Author getAuthor() {
+    return author;
+  }
+
+  public void setAuthor(Author author) {
+    this.author = author;
+  }
+
+  public Set<Tag> getTags() {
+    return tags;
+  }
+
+  public void assignTag(Tag tag) {
+    tags.add(tag);
+  }
+
+  public void deassignTag(Tag tag) {
+    tags.removeIf(pTag -> Objects.equals(pTag.getId(), tag.getId()));
   }
 }

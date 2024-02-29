@@ -4,7 +4,6 @@ import denvot.homework.bookService.controllers.requests.BookCreationRequest;
 import denvot.homework.bookService.controllers.requests.BookUpdateRequest;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import denvot.homework.bookService.services.BookCreationInfo;
 import denvot.homework.bookService.services.BooksServiceBase;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,23 +34,26 @@ public class BooksController {
   public BookApiEntity createBook(
           @Valid @RequestBody BookCreationRequest bookCreationRequest) throws InvalidBookDataException {
     var bookResult = booksService.createNew(
-            new BookCreationInfo(bookCreationRequest.getAuthor(),
-                    bookCreationRequest.getTitle(),
-                    Set.of(bookCreationRequest.getTags())));
+            new BookCreationInfo(bookCreationRequest.authorId(), bookCreationRequest.title()));
 
     return BookApiEntity.fromBook(bookResult);
   }
 
-  @GetMapping("/tags/{tag}")
-  public List<BookApiEntity> getBooksByTag(@PathVariable("tag") String tag) {
-    var books = booksService.getBooksByTags(Set.of(tag));
+  @DeleteMapping("{id}")
+  public void deleteBook(@PathVariable("id") long id) {
+    booksService.deleteBook(id);
+  }
+
+  @GetMapping("tags/{tag}")
+  public List<BookApiEntity> getBooksByTag(@PathVariable("tag") long tagId) {
+    var books = booksService.getBooksByTag(tagId);
 
     return books.stream().map(BookApiEntity::fromBook).collect(Collectors.toList());
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<BookApiEntity> getBook(@PathVariable("id") int id) {
-    var book = booksService.findBook(new BookId(id));
+  public ResponseEntity<BookApiEntity> getBook(@PathVariable("id") long id) {
+    var book = booksService.findBook(id);
 
     return book.map(value -> new ResponseEntity<>(BookApiEntity.fromBook(value), HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
@@ -60,24 +61,47 @@ public class BooksController {
 
   @PatchMapping("{id}")
   public ResponseEntity<BookApiEntity> updateBook(
-          @PathVariable("id") int id,
+          @PathVariable("id") long id,
           @RequestBody BookUpdateRequest updateRequest) {
-    var bookId = new BookId(id);
     Optional<Book> book = Optional.empty();
 
-    if(updateRequest.newAuthor() != null) {
-      book = booksService.updateBookAuthor(bookId, updateRequest.newAuthor());
+    if(updateRequest.newAuthorId() != null) {
+      book = booksService.updateBookAuthor(id, updateRequest.newAuthorId());
     }
 
     if (updateRequest.newTitle() != null) {
-      book = booksService.updateBookTitle(bookId, updateRequest.newTitle());
-    }
-
-    if (updateRequest.newTags() != null) {
-      book = booksService.updateBookTags(bookId, Set.of(updateRequest.newTags()));
+      book = booksService.updateBookTitle(id, updateRequest.newTitle());
     }
 
     return book.map(value -> new ResponseEntity<>(BookApiEntity.fromBook(value), HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+  }
+
+  @PatchMapping("{book_id}/tags/{tag_id}")
+  public ResponseEntity<BookApiEntity> addTagToBook(
+          @PathVariable("book_id") long bookId,
+          @PathVariable("tag_id") long tagId) {
+    var targetBook = booksService.addNewTag(bookId, tagId);
+
+    if (targetBook.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    return targetBook.map(value -> new ResponseEntity<>(BookApiEntity.fromBook(value), HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+  }
+
+  @DeleteMapping("{book_id}/tags/{tag_id}")
+  public ResponseEntity<BookApiEntity> removeTagFromBook(
+          @PathVariable("book_id") long bookId,
+          @PathVariable("tag_id") long tagId) {
+    var targetBook = booksService.removeTag(bookId, tagId);
+
+    if (targetBook.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    return targetBook.map(value -> new ResponseEntity<>(BookApiEntity.fromBook(value), HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
   }
 

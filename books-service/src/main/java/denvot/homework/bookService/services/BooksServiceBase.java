@@ -1,25 +1,27 @@
 package denvot.homework.bookService.services;
 
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 public interface BooksServiceBase {
   Book createNew(BookCreationInfo creationInfo) throws InvalidBookDataException;
 
-  Optional<Book> findBook(BookId id);
+  Optional<Book> findBook(long id);
 
-  boolean deleteBook(BookId id);
+  boolean deleteBook(long id);
 
-  ArrayList<Book> getBooksByTags(Set<String> tags);
+  List<Book> getBooksByTag(long tagId);
 
   List<Book> getAllBooks();
 
-  Optional<Book> updateBookAuthor(BookId bookId, String newAuthorName);
+  Optional<Book> updateBookAuthor(long id, long newAuthorId);
 
-  Optional<Book> updateBookTitle(BookId bookId, String newTitle);
+  Optional<Book> updateBookTitle(long id, String newTitle);
 
-  Optional<Book> updateBookTags(BookId bookId, Set<String> newTags);
+  Optional<Book> addNewTag(Long bookId, Long tagId);
+
+  Optional<Book> removeTag(Long bookId, Long tagId);
 }
