@@ -1,6 +1,7 @@
 package denvot.homework.bookService.controllers.books;
 
 import denvot.homework.bookService.DatabaseSuite;
+import denvot.homework.bookService.TestHelper;
 import denvot.homework.bookService.controllers.requests.BookCreationRequest;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Author;
@@ -55,10 +56,7 @@ class BooksControllerCreateBookTest extends DatabaseSuite {
 
     ResponseEntity<BookApiEntity> response = http.postForEntity("/api/books", bookCreationRequest, BookApiEntity.class);
 
-    assertTrue(response.getStatusCode().is2xxSuccessful());
-    assertTrue(response.hasBody());
-
-    BookApiEntity result = response.getBody();
+    BookApiEntity result = TestHelper.assert2xxAndGetBody(response);
 
     assertNotNull(result);
     assertEquals(testAuthor.getId(), result.author().id());

@@ -1,5 +1,6 @@
 package denvot.homework.bookService.controllers.books;
 
+import denvot.homework.bookService.TestHelper;
 import denvot.homework.bookService.controllers.requests.BookUpdateRequest;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Author;
@@ -59,10 +60,7 @@ public class BooksControllerUpdateBookTest {
     HttpEntity<BookUpdateRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
     ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{id}", HttpMethod.PATCH, updateRequestEntity, BookApiEntity.class, Map.of("id", testBook.getId()));
 
-    assertTrue(response.getStatusCode().is2xxSuccessful());
-    assertTrue(response.hasBody());
-
-    BookApiEntity body = response.getBody();
+    BookApiEntity body = TestHelper.assert2xxAndGetBody(response);
 
     assertNotNull(body);
     assertEquals(testAuthor.getId(), body.author().id());
@@ -96,10 +94,7 @@ public class BooksControllerUpdateBookTest {
     ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{book_id}/tags/{tag_id}", HttpMethod.PATCH,
             null, BookApiEntity.class, Map.of("book_id", testBook.getId(), "tag_id", testTag.getId()));
 
-    assertTrue(response.getStatusCode().is2xxSuccessful());
-    assertTrue(response.hasBody());
-
-    BookApiEntity body = response.getBody();
+    BookApiEntity body = TestHelper.assert2xxAndGetBody(response);
 
     assertNotNull(body);
     assertEquals(testAuthor.getId(), body.author().id());
@@ -139,10 +134,7 @@ public class BooksControllerUpdateBookTest {
     ResponseEntity<BookApiEntity> response = http.exchange("/api/books/{book_id}/tags/{tag_id}", HttpMethod.DELETE,
             null, BookApiEntity.class, Map.of("book_id", testBook.getId(), "tag_id", testTag.getId()));
 
-    assertTrue(response.getStatusCode().is2xxSuccessful());
-    assertTrue(response.hasBody());
-
-    BookApiEntity body = response.getBody();
+    BookApiEntity body = TestHelper.assert2xxAndGetBody(response);
 
     assertNotNull(body);
     assertEquals(testAuthor.getId(), body.author().id());

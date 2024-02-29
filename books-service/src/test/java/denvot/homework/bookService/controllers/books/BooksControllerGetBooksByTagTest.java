@@ -1,5 +1,6 @@
 package denvot.homework.bookService.controllers.books;
 
+import denvot.homework.bookService.TestHelper;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.entities.Book;
@@ -57,12 +58,8 @@ public class BooksControllerGetBooksByTagTest {
 
     ResponseEntity<BookApiEntity[]> booksResult = http.getForEntity("/api/books/tags/{tag}", BookApiEntity[].class, Map.of("tag", testTag.getId()));
 
-    assertTrue(booksResult.getStatusCode().is2xxSuccessful());
-    assertTrue(booksResult.hasBody());
+    BookApiEntity[] body = TestHelper.assert2xxAndGetBody(booksResult);
 
-    var body = booksResult.getBody();
-
-    assertNotNull(body);
     assertEquals(1, body.length);
     assertEquals(testBook.getId(), body[0].id());
   }
@@ -77,10 +74,7 @@ public class BooksControllerGetBooksByTagTest {
 
     ResponseEntity<BookApiEntity[]> booksResult = http.getForEntity("/api/books/tags/{tag}", BookApiEntity[].class, Map.of("tag", testTag.getId() + 1));
 
-    assertTrue(booksResult.getStatusCode().is2xxSuccessful());
-    assertTrue(booksResult.hasBody());
-
-    var body = booksResult.getBody();
+    BookApiEntity[] body = TestHelper.assert2xxAndGetBody(booksResult);
 
     assertNotNull(body);
     assertEquals(0, body.length);

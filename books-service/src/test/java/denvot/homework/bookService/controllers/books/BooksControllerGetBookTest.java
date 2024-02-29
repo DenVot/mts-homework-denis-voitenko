@@ -1,5 +1,6 @@
 package denvot.homework.bookService.controllers.books;
 
+import denvot.homework.bookService.TestHelper;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.entities.Book;
@@ -45,10 +46,7 @@ public class BooksControllerGetBookTest {
   public void testSimpleGetBook() {
     ResponseEntity<BookApiEntity> response = http.getForEntity("/api/books/{id}", BookApiEntity.class, Map.of("id", testBook.getId()));
 
-    assertTrue(response.getStatusCode().is2xxSuccessful());
-    assertTrue(response.hasBody());
-
-    var body = response.getBody();
+    BookApiEntity body = TestHelper.assert2xxAndGetBody(response);
 
     assertNotNull(body);
     assertEquals(testBook.getTitle(), body.title());
