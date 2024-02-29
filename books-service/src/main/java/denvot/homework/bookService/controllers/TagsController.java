@@ -27,6 +27,11 @@ public class TagsController {
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
   }
 
+  @DeleteMapping("{id}")
+  public void deleteTag(@PathVariable("id") long id) {
+    tagsService.deleteTag(id);
+  }
+
   @PostMapping
   public ResponseEntity<TagApiEntity> createTag(@RequestBody TagCreationRequest creationData) throws TagAlreadyExistsException {
     return ResponseEntity.ok(TagApiEntity.fromTag(tagsService.createNew(creationData.name())));
