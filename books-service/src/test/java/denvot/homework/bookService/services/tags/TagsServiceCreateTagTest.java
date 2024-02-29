@@ -1,5 +1,6 @@
 package denvot.homework.bookService.services.tags;
 
+import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.data.entities.Tag;
 import denvot.homework.bookService.data.repositories.jpa.JpaTagsRepository;
 import denvot.homework.bookService.exceptions.TagAlreadyExistsException;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
 @Import(TagsService.class)
-public class TagsServiceCreateTagTest {
+public class TagsServiceCreateTagTest extends DatabaseSuite {
   @Autowired
   private JpaTagsRepository tagsRepository;
 

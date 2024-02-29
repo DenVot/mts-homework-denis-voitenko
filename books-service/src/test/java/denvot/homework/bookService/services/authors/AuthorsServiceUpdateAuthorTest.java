@@ -1,5 +1,6 @@
 package denvot.homework.bookService.services.authors;
 
+import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.services.AuthorUpdateDto;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
 @Import({AuthorsService.class})
-public class AuthorsServiceUpdateAuthorTest {
+public class AuthorsServiceUpdateAuthorTest extends DatabaseSuite {
   @Autowired
   private JpaAuthorsRepository jpaAuthorsRepository;
 

@@ -1,5 +1,6 @@
 package denvot.homework.bookService.controllers.books;
 
+import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.TestHelper;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Author;
@@ -20,7 +21,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class BooksControllerGetBooksByTagTest {
+public class BooksControllerGetBooksByTagTest extends DatabaseSuite {
   @Autowired
   private JpaBooksRepository booksRepository;
 
