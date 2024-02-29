@@ -4,7 +4,7 @@ import denvot.homework.bookService.controllers.requests.TagCreationRequest;
 import denvot.homework.bookService.controllers.requests.TagUpdateRequest;
 import denvot.homework.bookService.controllers.responses.TagApiEntity;
 import denvot.homework.bookService.exceptions.TagAlreadyExistsException;
-import denvot.homework.bookService.services.TagsService;
+import denvot.homework.bookService.services.TagsServiceBase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RequestMapping("/api/tags")
 public class TagsController {
-  private final TagsService tagsService;
+  private final TagsServiceBase tagsService;
 
-  public TagsController(TagsService tagsService) {
+  public TagsController(TagsServiceBase tagsService) {
     this.tagsService = tagsService;
   }
 

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class TagsService {
+public class TagsService implements TagsServiceBase {
 
   private final JpaTagsRepository jpaTagsRepository;
 
@@ -18,6 +18,7 @@ public class TagsService {
     this.jpaTagsRepository = jpaTagsRepository;
   }
 
+  @Override
   @Transactional(propagation = Propagation.REQUIRED)
   public Tag createNew(String tagName) throws TagAlreadyExistsException {
     if (jpaTagsRepository.findByName(tagName).isPresent()) {
@@ -27,6 +28,7 @@ public class TagsService {
     return jpaTagsRepository.save(new Tag(tagName));
   }
 
+  @Override
   @Transactional(propagation = Propagation.REQUIRED)
   public boolean deleteTag(long id) {
     jpaTagsRepository.deleteById(id);
@@ -34,6 +36,7 @@ public class TagsService {
     return !jpaTagsRepository.existsById(id);
   }
 
+  @Override
   @Transactional(propagation = Propagation.REQUIRED)
   public Optional<Tag> rename(long id, String newName) throws TagAlreadyExistsException {
     var tagWithSameNameOpt = jpaTagsRepository.findByName(newName);
@@ -52,6 +55,7 @@ public class TagsService {
     return target;
   }
 
+  @Override
   @Transactional(propagation = Propagation.REQUIRED)
   public Optional<Tag> findTag(Long id) {
     return jpaTagsRepository.findById(id);
