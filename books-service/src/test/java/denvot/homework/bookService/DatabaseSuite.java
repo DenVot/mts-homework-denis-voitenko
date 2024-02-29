@@ -20,8 +20,8 @@ public class DatabaseSuite {
       TestPropertyValues.of(
               "spring.datasource.url=" + POSTGRES.getJdbcUrl(),
               "spring.datasource.username=" + POSTGRES.getUsername(),
-              "spring.datasource.password=" + POSTGRES.getPassword()
-              //"spring.jpa.hibernate.ddl-auto=create"
+              "spring.datasource.password=" + POSTGRES.getPassword(),
+              "spring.jpa.hibernate.ddl-auto=create"
       ).applyTo(context);
     }
   }
