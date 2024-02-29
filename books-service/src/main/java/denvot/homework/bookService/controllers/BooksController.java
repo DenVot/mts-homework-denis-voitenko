@@ -34,7 +34,7 @@ public class BooksController {
   public BookApiEntity createBook(
           @Valid @RequestBody BookCreationRequest bookCreationRequest) throws InvalidBookDataException {
     var bookResult = booksService.createNew(
-            new BookCreationInfo(bookCreationRequest.getAuthorId(), bookCreationRequest.getTitle()));
+            new BookCreationInfo(bookCreationRequest.authorId(), bookCreationRequest.title()));
 
     return BookApiEntity.fromBook(bookResult);
   }

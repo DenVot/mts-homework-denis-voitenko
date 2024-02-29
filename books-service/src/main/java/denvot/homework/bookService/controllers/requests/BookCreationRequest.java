@@ -2,23 +2,19 @@ package denvot.homework.bookService.controllers.requests;
 
 import jakarta.validation.constraints.NotNull;
 
-public class BookCreationRequest {
-  @NotNull
-  private final Long authorId;
-
-  @NotNull
-  private final String title;
-
+public record BookCreationRequest(@NotNull Long authorId, @NotNull String title) {
   public BookCreationRequest(Long authorId, String title) {
     this.title = title;
     this.authorId = authorId;
   }
 
-  public Long getAuthorId() {
+  @Override
+  public Long authorId() {
     return authorId;
   }
 
-  public String getTitle() {
+  @Override
+  public String title() {
     return title;
   }
 }

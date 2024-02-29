@@ -1,4 +1,7 @@
 package denvot.homework.bookService.controllers.requests;
 
-public record AuthorCreationRequest(String firstName, String lastName) {
+import jakarta.validation.constraints.NotNull;
+
+public record AuthorCreationRequest(@NotNull String firstName,
+                                    @NotNull String lastName) {
 }
