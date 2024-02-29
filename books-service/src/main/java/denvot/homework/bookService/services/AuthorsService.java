@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class AuthorsService {
+public class AuthorsService implements AuthorsServiceBase {
   private final JpaAuthorsRepository authorsRepository;
 
   public AuthorsService(JpaAuthorsRepository authorsRepository) {
@@ -17,6 +17,7 @@ public class AuthorsService {
     this.authorsRepository = authorsRepository;
   }
 
+  @Override
   @Transactional(propagation = Propagation.REQUIRED)
   public Author createNew(String firstName, String lastName) {
     var author = new Author(firstName, lastName);
@@ -24,11 +25,13 @@ public class AuthorsService {
     return authorsRepository.save(author);
   }
 
+  @Override
   @Transactional(propagation = Propagation.REQUIRED)
   public Optional<Author> findAuthor(long id) {
     return authorsRepository.findById(id);
   }
 
+  @Override
   @Transactional(propagation = Propagation.REQUIRED)
   public Optional<Author> updateAuthor(Long id, AuthorUpdateDto update) {
     var targetAuthorOpt = authorsRepository.findById(id);
@@ -48,6 +51,7 @@ public class AuthorsService {
     return targetAuthorOpt;
   }
 
+  @Override
   @Transactional(propagation = Propagation.REQUIRED)
   public boolean deleteAuthor(Long id) {
     var target = authorsRepository.findById(id);
