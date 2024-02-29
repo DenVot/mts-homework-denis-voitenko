@@ -39,6 +39,11 @@ public class BooksController {
     return BookApiEntity.fromBook(bookResult);
   }
 
+  @DeleteMapping("{id}")
+  public void deleteBook(@PathVariable("id") long id) {
+    booksService.deleteBook(id);
+  }
+
   @GetMapping("tags/{tag}")
   public List<BookApiEntity> getBooksByTag(@PathVariable("tag") long tagId) {
     var books = booksService.getBooksByTag(tagId);
