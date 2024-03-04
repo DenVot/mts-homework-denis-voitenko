@@ -1,39 +1,51 @@
 package denvot.homework.bookService.services;
 
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.BookId;
 import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
+import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
+import denvot.homework.bookService.data.repositories.jpa.JpaTagsRepository;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 @Service
 public class BooksService implements BooksServiceBase {
-
   private final BooksRepositoryBase booksRepository;
+  private final JpaAuthorsRepository jpaAuthorsRepository;
+  private final JpaTagsRepository jpaTagsRepository;
 
-  public BooksService(BooksRepositoryBase booksRepository) {
+  public BooksService(BooksRepositoryBase booksRepository, JpaAuthorsRepository jpaAuthorsRepository,
+                      JpaTagsRepository jpaTagsRepository) {
     this.booksRepository = booksRepository;
+    this.jpaAuthorsRepository = jpaAuthorsRepository;
+    this.jpaTagsRepository = jpaTagsRepository;
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED)
   public Book createNew(BookCreationInfo creationInfo) throws InvalidBookDataException {
-    if (creationInfo.author() == null ||
-            creationInfo.title() == null ||
-            creationInfo.tags() == null) {
+    if (creationInfo.authorId() == null ||
+            creationInfo.title() == null) {
       throw new InvalidBookDataException();
     }
 
-    return booksRepository.createBook(creationInfo.author(),
-            creationInfo.title(),
-            creationInfo.tags());
+    var targetAuthor = jpaAuthorsRepository.findById(creationInfo.authorId());
+
+    if (targetAuthor.isEmpty()) {
+      throw new InvalidBookDataException();
+    }
+
+    return booksRepository.createBook(targetAuthor.get(), creationInfo.title());
   }
 
   @Override
-  public Optional<Book> findBook(BookId id) {
+  @Transactional(propagation = Propagation.REQUIRED)
+  public Optional<Book> findBook(long id) {
     try {
       return Optional.of(booksRepository.findBook(id));
     } catch (BookNotFoundException e) {
@@ -42,7 +54,8 @@ public class BooksService implements BooksServiceBase {
   }
 
   @Override
-  public boolean deleteBook(BookId id) {
+  @Transactional(propagation = Propagation.REQUIRED)
+  public boolean deleteBook(long id) {
     try {
       booksRepository.deleteBook(id);
       return true;
@@ -52,32 +65,50 @@ public class BooksService implements BooksServiceBase {
   }
 
   @Override
-  public ArrayList<Book> getBooksByTags(Set<String> tags) {
-    return booksRepository.getByTags(tags);
+  @Transactional(propagation = Propagation.REQUIRED)
+  public List<Book> getBooksByTag(long tagId) {
+    return booksRepository.getByTag(tagId);
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED)
   public List<Book> getAllBooks() {
     return booksRepository.getAllBooks();
   }
 
   @Override
-  public Optional<Book> updateBookAuthor(BookId bookId, String newAuthorName) {
-    return updateBook(bookId, book -> book.setAuthor(newAuthorName));
+  @Transactional(propagation = Propagation.REQUIRED)
+  public Optional<Book> updateBookAuthor(long id, long newAuthorId) {
+    var targetAuthorOpt = jpaAuthorsRepository.findById(newAuthorId);
+
+    return targetAuthorOpt.flatMap(author -> updateBook(id, book -> book.setAuthor(author)));
   }
 
   @Override
-  public Optional<Book> updateBookTitle(BookId bookId, String newTitle) {
-    return updateBook(bookId, book -> book.setTitle(newTitle));
+  @Transactional(propagation = Propagation.REQUIRED)
+  public Optional<Book> updateBookTitle(long id, String newTitle) {
+    return updateBook(id, book -> book.setTitle(newTitle));
   }
 
   @Override
-  public Optional<Book> updateBookTags(BookId bookId, Set<String> newTags) {
-    return updateBook(bookId, book -> book.setTags(newTags));
+  @Transactional(propagation = Propagation.REQUIRED)
+  public Optional<Book> addNewTag(Long bookId, Long tagId) {
+    var targetTagOpt = jpaTagsRepository.findById(tagId);
+
+    return targetTagOpt.flatMap(tag -> updateBook(bookId, book -> book.assignTag(tag)));
   }
 
-  private Optional<Book> updateBook(BookId bookId, Consumer<Book> update) {
-    var target = findBook(bookId);
+  @Override
+  @Transactional(propagation = Propagation.REQUIRED)
+  public Optional<Book> removeTag(Long bookId, Long tagId) {
+    var targetTagOpt = jpaTagsRepository.findById(tagId);
+
+    return targetTagOpt.flatMap(tag -> updateBook(bookId, book -> book.deassignTag(tag)));
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED)
+  public Optional<Book> updateBook(long id, Consumer<Book> update) {
+    var target = findBook(id);
     if (target.isEmpty()) return target;
 
     var targetBook = target.get();
