@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AuthorsRegistryApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AuthorsRegistryApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(AuthorsRegistryApplication.class, args);
+  }
 
 }
