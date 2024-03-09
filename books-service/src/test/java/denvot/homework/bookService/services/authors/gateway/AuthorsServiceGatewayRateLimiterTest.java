@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -18,6 +20,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -43,17 +46,16 @@ public class AuthorsServiceGatewayRateLimiterTest {
 
   @Test
   public void testRateLimiter() {
-    when(restTemplate.getForEntity(
-            eq(AuthorsRegistryServiceGateway.IS_AUTHOR_WROTE_THIS_BOOK_ROUTE +
-                    "?firstName={firstName}&lastName={lastName}&bookName={bookName}"),
+    when(restTemplate.exchange(
+            any(String.class),
+            any(HttpMethod.class),
+            any(HttpEntity.class),
             eq(AuthorsRegistryServiceGateway.IsAuthorWroteThisBookResponse.class),
-                    eq(Map.of("firstName", "Test",
-                            "lastName", "Author",
-                            "bookName", "Test Book"))))
-            .thenAnswer(invocation ->
-                    new ResponseEntity<>(
-                            new AuthorsRegistryServiceGateway.IsAuthorWroteThisBookResponse(true),
-                            HttpStatus.OK));
+            any(Map.class)))
+          .thenAnswer(invocation ->
+            new ResponseEntity<>(
+                    new AuthorsRegistryServiceGateway.IsAuthorWroteThisBookResponse(true),
+                    HttpStatus.OK));
 
     assertDoesNotThrow(() -> universityGateway.isAuthorWroteThisBook("Test", "Author", "Test Book"));
     assertThrows(RequestNotPermitted.class, () -> universityGateway.isAuthorWroteThisBook("Test", "Author", "Test Book"));
