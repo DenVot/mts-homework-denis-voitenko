@@ -6,12 +6,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
 @Configuration
 public class RestTemplateConfiguration {
   @Bean
   public RestTemplate restTemplate(
-          @Value("${authors-registry.service.base.url}") String baseUrl) {
+          @Value("${authors-registry.service.base.url}") String baseUrl,
+          @Value("${authors-registry.service.timeout}") long timeoutMillis) {
+    var timeout = Duration.ofMillis(timeoutMillis);
+
     return new RestTemplateBuilder()
+            .setConnectTimeout(timeout)
+            .setReadTimeout(timeout)
             .rootUri(baseUrl)
             .build();
   }

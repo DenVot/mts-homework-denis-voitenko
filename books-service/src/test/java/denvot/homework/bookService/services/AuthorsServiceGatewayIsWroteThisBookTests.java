@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.web.client.RestClientException;
 import org.testcontainers.containers.MockServerContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
@@ -48,12 +48,13 @@ class AuthorsServiceGatewayIsWroteThisBookTests {
   @DynamicPropertySource
   public static void setProperties(DynamicPropertyRegistry registry) {
     registry.add("authors-registry.service.base.url", mockServer::getEndpoint);
+    registry.add("authors-registry.service.timeout", () -> 300);
   }
 
   @Test
   void testIsAuthorWroteThisBook() {
     client.when(request()
-            .withPath("/api/authors-registry/is-wrote-this-book"))
+            .withPath(AuthorsRegistryServiceGateway.IS_AUTHOR_WROTE_THIS_BOOK_ROUTE))
             .respond(response()
                     .withStatusCode(200)
                     .withBody("""
@@ -76,5 +77,22 @@ class AuthorsServiceGatewayIsWroteThisBookTests {
                     .withContentType(MediaType.APPLICATION_JSON));
 
     assertFalse(authorsGateway.isAuthorWroteThisBook("Test", "Author", "Test book"));
+  }
+
+  @Test
+  void testTimeout() {
+    client.when(request()
+                    .withPath(AuthorsRegistryServiceGateway.IS_AUTHOR_WROTE_THIS_BOOK_ROUTE))
+            .respond(request -> {
+              Thread.sleep(3000);
+
+              return response().withBody("""
+                              { "isWrote": true }
+                            """)
+                      .withContentType(MediaType.APPLICATION_JSON);
+            });
+
+    assertThrows(RestClientException.class, () ->
+            authorsGateway.isAuthorWroteThisBook("Test", "Author", "Test book"));
   }
 }
