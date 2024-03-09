@@ -1,5 +1,6 @@
 package denvot.homework.authorsregistry;
 
+import denvot.homework.authorsregistry.controllers.reponses.IsWroteStatusResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +19,7 @@ public class IsAuthorWroteThisBookTests {
   public void testIsWrote() {
     var result = http.getForEntity(
             "/api/authors-registry/is-wrote-this-book?firstName={firstName}&lastName={lastName}&bookName={bookName}",
-            String.class,
+            IsWroteStatusResponse.class,
             Map.of("firstName", "Кент",
                     "lastName", "Бек",
                     "bookName", "TDD"));
@@ -26,14 +27,14 @@ public class IsAuthorWroteThisBookTests {
     assertTrue(result.getStatusCode().is2xxSuccessful());
     assertTrue(result.hasBody());
     assertNotNull(result.getBody());
-    assertEquals("true", result.getBody());
+    assertTrue(result.getBody().isWrote());
   }
 
   @Test
   public void testIsNotWrote() {
     var result = http.getForEntity(
             "/api/authors-registry/is-wrote-this-book?firstName={firstName}&lastName={lastName}&bookName={bookName}",
-            String.class,
+            IsWroteStatusResponse.class,
             Map.of("firstName", "Кент",
                     "lastName", "Бек",
                     "bookName", "TDD2"));
@@ -41,6 +42,6 @@ public class IsAuthorWroteThisBookTests {
     assertTrue(result.getStatusCode().is2xxSuccessful());
     assertTrue(result.hasBody());
     assertNotNull(result.getBody());
-    assertEquals("false", result.getBody());
+    assertFalse(result.getBody().isWrote());
   }
 }

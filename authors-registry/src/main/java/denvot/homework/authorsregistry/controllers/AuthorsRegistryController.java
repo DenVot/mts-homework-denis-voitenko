@@ -1,6 +1,8 @@
 package denvot.homework.authorsregistry.controllers;
 
 import denvot.homework.authorsregistry.Tuple;
+import denvot.homework.authorsregistry.controllers.reponses.IsWroteStatusResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,19 +20,20 @@ public class AuthorsRegistryController {
   private final HashSet<String> requests = new HashSet<>();
 
   @GetMapping("/api/authors-registry/is-wrote-this-book")
-  public String isWrote(@RequestParam("firstName") String firstName,
-                         @RequestParam("lastName") String lastName,
-                         @RequestParam("bookName") String bookName,
-                         @RequestHeader("X-REQUEST-ID") Optional<String> uuid) {
+  public ResponseEntity<IsWroteStatusResponse> isWrote(@RequestParam("firstName") String firstName,
+                                                       @RequestParam("lastName") String lastName,
+                                                       @RequestParam("bookName") String bookName,
+                                                       @RequestHeader("X-REQUEST-ID") Optional<String> uuid) {
     if (uuid.isPresent()) {
       if (requests.contains(uuid.get())) {
         requests.add(uuid.get());
-        return "true";
+        return ResponseEntity.ok(new IsWroteStatusResponse(false));
       }
 
       requests.add(uuid.get());
     }
 
-    return Boolean.toString(authorsBooks.contains(new Tuple<>(firstName + " " + lastName, bookName)));
+    return ResponseEntity.ok(
+            new IsWroteStatusResponse(authorsBooks.contains(new Tuple<>(firstName + " " + lastName, bookName))));
   }
 }
