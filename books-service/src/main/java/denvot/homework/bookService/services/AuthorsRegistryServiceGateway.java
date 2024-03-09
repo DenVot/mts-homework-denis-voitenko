@@ -1,7 +1,10 @@
 package denvot.homework.bookService.services;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @Service
 public class AuthorsRegistryServiceGateway implements AuthorsRegistryServiceGatewayBase {
@@ -17,8 +20,14 @@ public class AuthorsRegistryServiceGateway implements AuthorsRegistryServiceGate
   }
 
   @Override
+  @RateLimiter(name="isWrote")
   public boolean isAuthorWroteThisBook(String firstName, String lastName, String bookName) {
-    var result = http.getForEntity(IS_AUTHOR_WROTE_THIS_BOOK_ROUTE, IsAuthorWroteThisBookResponse.class);
+    var result = http.getForEntity(IS_AUTHOR_WROTE_THIS_BOOK_ROUTE +
+                    "?firstName={firstName}&lastName={lastName}&bookName={bookName}",
+            IsAuthorWroteThisBookResponse.class,
+            Map.of("firstName", firstName,
+                    "lastName", lastName,
+                    "bookName", bookName));
 
     if (!result.getStatusCode().is2xxSuccessful() || !result.hasBody() || result.getBody() == null) {
       throw new RuntimeException();
