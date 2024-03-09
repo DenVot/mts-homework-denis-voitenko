@@ -1,7 +1,11 @@
-package denvot.homework.bookService.services;
+package denvot.homework.bookService.services.authors.gateway;
 
 import denvot.homework.bookService.config.RestTemplateConfiguration;
-import org.junit.jupiter.api.*;
+import denvot.homework.bookService.services.AuthorsRegistryServiceGateway;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.model.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +18,13 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 @Testcontainers
 @SpringBootTest(classes = {AuthorsRegistryServiceGateway.class, RestTemplateConfiguration.class})
-class AuthorsServiceGatewayIsWroteThisBookTests {
+public class AuthorsServiceGatewayTimeoutTest {
   @Container
   public static final MockServerContainer mockServer =
           new MockServerContainer(DockerImageName.parse("mockserver/mockserver:5.13.2"));
@@ -49,34 +53,6 @@ class AuthorsServiceGatewayIsWroteThisBookTests {
   public static void setProperties(DynamicPropertyRegistry registry) {
     registry.add("authors-registry.service.base.url", mockServer::getEndpoint);
     registry.add("authors-registry.service.timeout", () -> 300);
-  }
-
-  @Test
-  void testIsAuthorWroteThisBook() {
-    client.when(request()
-            .withPath(AuthorsRegistryServiceGateway.IS_AUTHOR_WROTE_THIS_BOOK_ROUTE))
-            .respond(response()
-                    .withStatusCode(200)
-                    .withBody("""
-                              { "isWrote": true }
-                            """)
-                    .withContentType(MediaType.APPLICATION_JSON));
-
-    assertTrue(authorsGateway.isAuthorWroteThisBook("Test", "Author", "Test book"));
-  }
-
-  @Test
-  void testIsAuthorDidntWriteThisBook() {
-    client.when(request()
-                    .withPath(AuthorsRegistryServiceGateway.IS_AUTHOR_WROTE_THIS_BOOK_ROUTE))
-            .respond(response()
-                    .withStatusCode(200)
-                    .withBody("""
-                              { "isWrote": false }
-                            """)
-                    .withContentType(MediaType.APPLICATION_JSON));
-
-    assertFalse(authorsGateway.isAuthorWroteThisBook("Test", "Author", "Test book"));
   }
 
   @Test
