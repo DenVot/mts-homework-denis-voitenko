@@ -67,6 +67,13 @@ public class BooksService implements BooksServiceBase {
   @Transactional(propagation = Propagation.REQUIRED)
   public boolean deleteBook(long id) {
     try {
+      var book = booksRepository.findBook(id);
+      var author = book.getAuthor();
+
+      if (!authorsGateway.isAuthorWroteThisBook(author.getFirstName(), author.getLastName(), book.getTitle())) {
+        return false;
+      }
+
       booksRepository.deleteBook(id);
       return true;
     } catch (BookNotFoundException e) {

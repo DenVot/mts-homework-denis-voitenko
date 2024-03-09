@@ -21,8 +21,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @DataJpaTest
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -58,6 +59,7 @@ public class BooksServiceDeleteBookTests extends DatabaseSuite {
 
   @Test
   public void testSimpleDelete() {
+    when(authorsRegistry.isAuthorWroteThisBook(any(), any(), any())).thenReturn(true);
     assertTrue(booksService.deleteBook(testBook.getId()));
     assertEquals(0, booksRepository.findAll().size());
   }
@@ -67,5 +69,12 @@ public class BooksServiceDeleteBookTests extends DatabaseSuite {
     boolean isDeleted = booksService.deleteBook(testBook.getId() + 1);
 
     Assertions.assertFalse(isDeleted);
+  }
+
+  @Test
+  public void testDeleteBookAuthorNotWroteThisBook() {
+    when(authorsRegistry.isAuthorWroteThisBook(any(), any(), any())).thenReturn(false);
+    assertFalse(booksService.deleteBook(testBook.getId()));
+    assertEquals(1, booksRepository.findAll().size());
   }
 }
