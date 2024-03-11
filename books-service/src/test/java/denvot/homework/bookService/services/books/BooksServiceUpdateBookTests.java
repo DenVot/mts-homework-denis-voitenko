@@ -8,12 +8,14 @@ import denvot.homework.bookService.data.repositories.DbBooksRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaTagsRepository;
+import denvot.homework.bookService.services.AuthorsRegistryServiceGatewayBase;
 import denvot.homework.bookService.services.BooksService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
-@Import({BooksService.class, DbBooksRepository.class})
+@Import({BooksService.class, DbBooksRepository.class, AuthorsRegistryServiceGatewayBase.class})
 public class BooksServiceUpdateBookTests extends DatabaseSuite {
   @Autowired
   private JpaBooksRepository booksRepository;
@@ -41,6 +43,9 @@ public class BooksServiceUpdateBookTests extends DatabaseSuite {
 
   @Autowired
   private JpaTagsRepository tagsRepository;
+
+  @MockBean
+  private AuthorsRegistryServiceGatewayBase authorsRegistry;
 
   private Book testBook;
 

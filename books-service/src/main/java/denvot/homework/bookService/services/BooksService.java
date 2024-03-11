@@ -18,12 +18,16 @@ public class BooksService implements BooksServiceBase {
   private final BooksRepositoryBase booksRepository;
   private final JpaAuthorsRepository jpaAuthorsRepository;
   private final JpaTagsRepository jpaTagsRepository;
+  private final AuthorsRegistryServiceGatewayBase authorsGateway;
 
-  public BooksService(BooksRepositoryBase booksRepository, JpaAuthorsRepository jpaAuthorsRepository,
-                      JpaTagsRepository jpaTagsRepository) {
+  public BooksService(BooksRepositoryBase booksRepository,
+                      JpaAuthorsRepository jpaAuthorsRepository,
+                      JpaTagsRepository jpaTagsRepository,
+                      AuthorsRegistryServiceGatewayBase authorsGateway) {
     this.booksRepository = booksRepository;
     this.jpaAuthorsRepository = jpaAuthorsRepository;
     this.jpaTagsRepository = jpaTagsRepository;
+    this.authorsGateway = authorsGateway;
   }
 
   @Override
@@ -34,13 +38,19 @@ public class BooksService implements BooksServiceBase {
       throw new InvalidBookDataException();
     }
 
-    var targetAuthor = jpaAuthorsRepository.findById(creationInfo.authorId());
+    var targetAuthorOpt = jpaAuthorsRepository.findById(creationInfo.authorId());
 
-    if (targetAuthor.isEmpty()) {
+    if (targetAuthorOpt.isEmpty()) {
       throw new InvalidBookDataException();
     }
 
-    return booksRepository.createBook(targetAuthor.get(), creationInfo.title());
+    var targetAuthor = targetAuthorOpt.get();
+
+    if (!authorsGateway.isAuthorWroteThisBook(targetAuthor.getFirstName(), targetAuthor.getLastName(), creationInfo.title())) {
+      throw new InvalidBookDataException();
+    }
+
+    return booksRepository.createBook(targetAuthor, creationInfo.title());
   }
 
   @Override
@@ -57,6 +67,13 @@ public class BooksService implements BooksServiceBase {
   @Transactional(propagation = Propagation.REQUIRED)
   public boolean deleteBook(long id) {
     try {
+      var book = booksRepository.findBook(id);
+      var author = book.getAuthor();
+
+      if (!authorsGateway.isAuthorWroteThisBook(author.getFirstName(), author.getLastName(), book.getTitle())) {
+        return false;
+      }
+
       booksRepository.deleteBook(id);
       return true;
     } catch (BookNotFoundException e) {

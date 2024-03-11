@@ -8,11 +8,13 @@ import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
+import denvot.homework.bookService.services.AuthorsRegistryServiceGatewayBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -34,6 +38,9 @@ class BooksControllerCreateBookTest extends DatabaseSuite {
 
   @Autowired
   private TestRestTemplate http;
+
+  @MockBean
+  private AuthorsRegistryServiceGatewayBase authorsGateway;
 
   private Book testBook;
   private Author testAuthor;
@@ -52,6 +59,7 @@ class BooksControllerCreateBookTest extends DatabaseSuite {
 
   @Test
   public void testSimpleCreation() {
+    when(authorsGateway.isAuthorWroteThisBook(any(), any(), any())).thenReturn(true);
     var bookCreationRequest = new BookCreationRequest(testAuthor.getId(), testBook.getTitle());
 
     ResponseEntity<BookApiEntity> response = http.postForEntity("/api/books", bookCreationRequest, BookApiEntity.class);
