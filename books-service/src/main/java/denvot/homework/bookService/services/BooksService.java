@@ -19,15 +19,18 @@ public class BooksService implements BooksServiceBase {
   private final JpaAuthorsRepository jpaAuthorsRepository;
   private final JpaTagsRepository jpaTagsRepository;
   private final AuthorsRegistryServiceGatewayBase authorsGateway;
+  private final BookRatingHubBase ratingHub;
 
   public BooksService(BooksRepositoryBase booksRepository,
                       JpaAuthorsRepository jpaAuthorsRepository,
                       JpaTagsRepository jpaTagsRepository,
-                      AuthorsRegistryServiceGatewayBase authorsGateway) {
+                      AuthorsRegistryServiceGatewayBase authorsGateway,
+                      BookRatingHubBase ratingHub) {
     this.booksRepository = booksRepository;
     this.jpaAuthorsRepository = jpaAuthorsRepository;
     this.jpaTagsRepository = jpaTagsRepository;
     this.authorsGateway = authorsGateway;
+    this.ratingHub = ratingHub;
   }
 
   @Override
@@ -121,6 +124,13 @@ public class BooksService implements BooksServiceBase {
     var targetTagOpt = jpaTagsRepository.findById(tagId);
 
     return targetTagOpt.flatMap(tag -> updateBook(bookId, book -> book.deassignTag(tag)));
+  }
+
+  @Override
+  public void requestRateBook(Long bookId) throws BookNotFoundException {
+    var book = booksRepository.findBook(bookId);
+
+    ratingHub.requestRating(book.getId());
   }
 
   @Transactional(propagation = Propagation.REQUIRED)

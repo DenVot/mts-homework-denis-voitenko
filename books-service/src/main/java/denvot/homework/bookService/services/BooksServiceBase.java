@@ -1,6 +1,7 @@
 package denvot.homework.bookService.services;
 
 import denvot.homework.bookService.data.entities.Book;
+import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 
 import java.util.List;
@@ -24,4 +25,6 @@ public interface BooksServiceBase {
   Optional<Book> addNewTag(Long bookId, Long tagId);
 
   Optional<Book> removeTag(Long bookId, Long tagId);
+
+  void requestRateBook(Long bookId) throws BookNotFoundException;
 }
