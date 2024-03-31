@@ -34,7 +34,7 @@ public class BookRatingHub {
     var rate = ratingProvider.rate(request.bookId());
     var responsePayload = objectMapper.writeValueAsString(new BookRateResponseMessage(request.bookId(), rate));
 
-    kafkaTemplate.send(topicToSendMessage, responsePayload);
+    kafkaTemplate.send(topicToSendMessage, Long.toString(request.bookId()), responsePayload);
     ack.acknowledge();
   }
 }
