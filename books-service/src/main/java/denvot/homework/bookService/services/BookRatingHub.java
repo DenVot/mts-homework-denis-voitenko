@@ -6,9 +6,14 @@ import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BookRatingHub implements BookRatingHubBase {
@@ -43,6 +48,21 @@ public class BookRatingHub implements BookRatingHubBase {
       throw new RuntimeException("Couldn't send message to Kafka", e);
     } catch (TimeoutException e) {
       throw new RuntimeException("Couldn't send message to Kafka due to timeout", e);
+    }
+  }
+
+  @KafkaListener(topics = {"${topic-to-receive-message}"})
+  @Transactional
+  public void onKafkaMessageReceived(String message, Acknowledgment ack)
+      throws JsonProcessingException {
+    var response = objectMapper.readValue(message, BookRateResponseMessage.class);
+    try {
+      var targetBook = booksRepositoryBase.findBook(response.bookId());
+
+      targetBook.setRating(response.rating());
+      ack.acknowledge();
+    } catch (BookNotFoundException e) {
+      // Ignore
     }
   }
 }
