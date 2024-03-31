@@ -36,7 +36,6 @@ public class Book {
   @Column(name = "title", nullable = false, length = Integer.MAX_VALUE)
   private String title;
 
-  @Null
   @Column(name = "rating")
   private int rating;
 

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import denvot.homework.bookService.KafkaTestConsumer;
 import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import denvot.homework.bookService.services.BookRatingHub;
-import denvot.homework.bookService.services.RateBookMessage;
+import denvot.homework.bookService.services.BookRateRequestMessage;
 import java.util.List;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.junit.jupiter.api.Test;
@@ -68,8 +68,8 @@ public class BookRatingHubKafkaRequestRateTests {
     records.iterator().forEachRemaining(
       record -> {
         try {
-          var message = objectMapper.readValue(record.value(), RateBookMessage.class);
-          assertEquals(new RateBookMessage(1551L), message);
+          var message = objectMapper.readValue(record.value(), BookRateRequestMessage.class);
+          assertEquals(new BookRateRequestMessage(1551L), message);
         } catch (JsonProcessingException e) {
           throw new RuntimeException(e);
         }
