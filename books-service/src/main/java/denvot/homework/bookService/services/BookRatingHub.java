@@ -36,7 +36,7 @@ public class BookRatingHub implements BookRatingHubBase {
   @Override
   public void requestRating(long id) {
     try {
-      var result = kafkaTemplate.send(requestTopic, objectMapper.writeValueAsString(new RateBookMessage(id)));
+      var result = kafkaTemplate.send(requestTopic, Long.toString(id), objectMapper.writeValueAsString(new RateBookMessage(id)));
 
       result.get(2, TimeUnit.SECONDS);
     } catch (JsonProcessingException e) {
