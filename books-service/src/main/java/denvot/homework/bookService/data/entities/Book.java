@@ -2,6 +2,7 @@ package denvot.homework.bookService.data.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -34,6 +35,9 @@ public class Book {
   @NotNull
   @Column(name = "title", nullable = false, length = Integer.MAX_VALUE)
   private String title;
+
+  @Column(name = "rating")
+  private int rating;
 
   protected Book() {}
 
@@ -76,5 +80,13 @@ public class Book {
 
   public void deassignTag(Tag tag) {
     tags.removeIf(pTag -> Objects.equals(pTag.getId(), tag.getId()));
+  }
+
+  public int getRating() {
+    return rating;
+  }
+
+  public void setRating(int rating) {
+    this.rating = rating;
   }
 }

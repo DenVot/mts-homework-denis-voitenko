@@ -1,13 +1,15 @@
 package denvot.homework.bookService.services.books;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.Tag;
 import denvot.homework.bookService.data.repositories.DbBooksRepository;
+import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
-import denvot.homework.bookService.data.repositories.jpa.JpaTagsRepository;
 import denvot.homework.bookService.services.AuthorsRegistryServiceGatewayBase;
 import denvot.homework.bookService.services.BookRatingHubBase;
 import denvot.homework.bookService.services.BooksService;
@@ -22,17 +24,15 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DataJpaTest
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
-@Import({BooksService.class, DbBooksRepository.class, AuthorsRegistryServiceGatewayBase.class})
-public class BooksServiceUpdateBookTests extends DatabaseSuite {
+@Import({BooksService.class,
+        DbBooksRepository.class,
+        AuthorsRegistryServiceGatewayBase.class,
+        BookRatingHubBase.class})
+public class BooksServiceRateBookTests extends DatabaseSuite {
   @Autowired
   private JpaBooksRepository booksRepository;
 
@@ -42,14 +42,11 @@ public class BooksServiceUpdateBookTests extends DatabaseSuite {
   @Autowired
   private BooksService booksService;
 
-  @Autowired
-  private JpaTagsRepository tagsRepository;
+  @MockBean
+  private AuthorsRegistryServiceGatewayBase registry;
 
   @MockBean
-  private AuthorsRegistryServiceGatewayBase authorsRegistry;
-
-  @MockBean
-  private BookRatingHubBase ratingHubMock;
+  private BookRatingHubBase ratingHub;
 
   private Book testBook;
 
@@ -57,7 +54,6 @@ public class BooksServiceUpdateBookTests extends DatabaseSuite {
   public void setUp() {
     booksRepository.deleteAll();
     authorsRepository.deleteAll();
-    tagsRepository.deleteAll();
 
     var testAuthor = new Author("Test", "Author");
     authorsRepository.save(testAuthor);
@@ -67,48 +63,12 @@ public class BooksServiceUpdateBookTests extends DatabaseSuite {
   }
 
   @Test
-  public void updateAuthor() {
-    var anotherAuthor = new Author("Another", "Author");
-    authorsRepository.save(anotherAuthor);
-
-    var book = booksService.updateBookAuthor(testBook.getId(), anotherAuthor.getId());
-
-    assertTrue(book.isPresent());
-    assertEquals(testBook.getId(), book.get().getId());
-    assertEquals(anotherAuthor.getId(), book.get().getAuthor().getId());
+  public void testRate() {
+    assertDoesNotThrow(() -> booksService.requestRateBook(testBook.getId()));
   }
 
   @Test
-  public void updateTitle() {
-    var book = booksService.updateBookTitle(testBook.getId(), "Another Test Book");
-
-    assertTrue(book.isPresent());
-    assertEquals(testBook.getId(), book.get().getId());
-    assertEquals("Another Test Book", book.get().getTitle());
-  }
-
-  @Test
-  public void updateAddTag() {
-    var tag = new Tag("Some Test Tag");
-    tagsRepository.save(tag);
-
-    Optional<Book> book = booksService.addNewTag(testBook.getId(), tag.getId());
-
-    assertTrue(book.isPresent());
-    assertEquals(1, book.get().getTags().size());
-  }
-
-  @Test
-  public void updateRemoveTag() {
-    var tag = new Tag("Some Test Tag");
-    tagsRepository.save(tag);
-
-    testBook.assignTag(tag);
-    booksRepository.save(testBook);
-
-    Optional<Book> book = booksService.removeTag(testBook.getId(), tag.getId());
-
-    assertTrue(book.isPresent());
-    assertEquals(0, book.get().getTags().size());
+  public void testRateBookNotFound() {
+    assertThrows(BookNotFoundException.class, () -> booksService.requestRateBook(testBook.getId() + 1));
   }
 }

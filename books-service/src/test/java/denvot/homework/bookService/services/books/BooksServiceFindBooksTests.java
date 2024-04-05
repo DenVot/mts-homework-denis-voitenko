@@ -7,6 +7,7 @@ import denvot.homework.bookService.data.repositories.DbBooksRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
 import denvot.homework.bookService.services.AuthorsRegistryServiceGatewayBase;
+import denvot.homework.bookService.services.BookRatingHubBase;
 import denvot.homework.bookService.services.BooksService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,9 @@ public class BooksServiceFindBooksTests extends DatabaseSuite {
 
   @MockBean
   private AuthorsRegistryServiceGatewayBase authorsRegistry;
+
+  @MockBean
+  private BookRatingHubBase ratingHubMock;
 
   private Book testBook;
 
