@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class WalletService {
+public class WalletService implements WalletServiceBase {
   private final WalletRepository repository;
   private final int defaultBalance;
 
