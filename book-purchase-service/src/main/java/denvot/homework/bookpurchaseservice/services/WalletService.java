@@ -2,8 +2,10 @@ package denvot.homework.bookpurchaseservice.services;
 
 import denvot.homework.bookpurchaseservice.data.entities.Wallet;
 import denvot.homework.bookpurchaseservice.data.repositories.WalletRepository;
+import denvot.homework.bookpurchaseservice.exceptions.NotEnoughMoneyException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class WalletService {
@@ -24,5 +26,19 @@ public class WalletService {
     }
 
     return repository.findAll().get(0);
+  }
+
+  @Transactional
+  public void pay(int amount) {
+    var wallet = getWallet();
+    var walletBalance = wallet.getBalance();
+
+    if (walletBalance - amount >= 0) {
+      wallet.setBalance(walletBalance - amount);
+    } else {
+      throw new NotEnoughMoneyException();
+    }
+
+    repository.save(wallet);
   }
 }
