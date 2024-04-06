@@ -1,4 +1,4 @@
-package denvot.homework.bookpurchaseservice.entities;
+package denvot.homework.bookpurchaseservice.data.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
