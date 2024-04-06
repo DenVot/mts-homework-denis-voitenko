@@ -1,7 +1,7 @@
 package denvot.homework.bookpurchaseservice.outbox;
 
 import denvot.homework.bookpurchaseservice.data.entities.OutboxRecord;
-import denvot.homework.bookpurchaseservice.data.entities.OutboxRepository;
+import denvot.homework.bookpurchaseservice.data.repositories.OutboxRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
