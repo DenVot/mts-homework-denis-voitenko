@@ -39,6 +39,10 @@ public class Book {
   @Column(name = "rating")
   private int rating;
 
+  @Column(name = "purchasing_status")
+  @Enumerated(EnumType.STRING)
+  private PurchasingStatus purchasingStatus = PurchasingStatus.NONE;
+
   protected Book() {}
 
   public Book(String title, Author author) {
@@ -88,5 +92,13 @@ public class Book {
 
   public void setRating(int rating) {
     this.rating = rating;
+  }
+
+  public PurchasingStatus getPurchasingStatus() {
+    return purchasingStatus;
+  }
+
+  public void setPurchasingStatus(PurchasingStatus purchasingStatus) {
+    this.purchasingStatus = purchasingStatus;
   }
 }
