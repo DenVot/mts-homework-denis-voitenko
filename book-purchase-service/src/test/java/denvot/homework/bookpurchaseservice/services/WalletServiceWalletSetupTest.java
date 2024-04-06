@@ -1,4 +1,4 @@
-package denvot.homework.bookpurchaseservice.service;
+package denvot.homework.bookpurchaseservice.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import denvot.homework.bookpurchaseservice.DatabaseSuite;
 import denvot.homework.bookpurchaseservice.data.entities.Wallet;
 import denvot.homework.bookpurchaseservice.data.repositories.WalletRepository;
-import denvot.homework.bookpurchaseservice.services.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

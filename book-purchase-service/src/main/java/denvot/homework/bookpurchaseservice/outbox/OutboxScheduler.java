@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OutboxScheduler {
+public class OutboxScheduler implements OutboxSchedulerBase {
   private final KafkaTemplate<String, String> kafkaTemplate;
   private final String topic;
   private final OutboxRepository outboxRepository;
@@ -36,6 +36,7 @@ public class OutboxScheduler {
     outboxRepository.deleteAll(result);
   }
 
+  @Override
   @Transactional
   public void scheduleMsg(String data) {
     outboxRepository.save(new OutboxRecord(data));

@@ -1,3 +1,5 @@
 package denvot.homework.bookpurchaseservice.services;
 
-public interface WalletServiceBase {}
+public interface WalletServiceBase {
+  void pay(int amount);
+}

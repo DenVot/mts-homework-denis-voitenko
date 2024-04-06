@@ -1,10 +1,9 @@
-package denvot.homework.bookpurchaseservice.service;
+package denvot.homework.bookpurchaseservice.services;
 
 import denvot.homework.bookpurchaseservice.DatabaseSuite;
 import denvot.homework.bookpurchaseservice.data.entities.Wallet;
 import denvot.homework.bookpurchaseservice.data.repositories.WalletRepository;
 import denvot.homework.bookpurchaseservice.exceptions.NotEnoughMoneyException;
-import denvot.homework.bookpurchaseservice.services.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +30,10 @@ public class WalletServicePayTest extends DatabaseSuite {
   @Autowired
   private WalletRepository walletRepository;
 
-  private Wallet testWallet;
-
   @BeforeEach
   public void setUp() {
     walletRepository.deleteAll();
-    testWallet = new Wallet(100);
-
-    walletRepository.save(testWallet);
+    walletRepository.save(new Wallet(100));
   }
 
   @Test
