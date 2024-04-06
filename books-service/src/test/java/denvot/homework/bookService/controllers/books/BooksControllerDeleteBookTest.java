@@ -6,6 +6,7 @@ import denvot.homework.bookService.data.entities.Book;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
 import denvot.homework.bookService.services.AuthorsRegistryServiceGatewayBase;
+import denvot.homework.bookService.services.BooksPurchasingManagerBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class BooksControllerDeleteBookTest extends DatabaseSuite {
 
   @MockBean
   private AuthorsRegistryServiceGatewayBase authorGatewayBase;
+
+  @MockBean
+  private BooksPurchasingManagerBase booksPurchasingManager;
 
   private Book testBook;
 

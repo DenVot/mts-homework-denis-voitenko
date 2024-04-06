@@ -9,10 +9,12 @@ import denvot.homework.bookService.data.entities.Tag;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaTagsRepository;
+import denvot.homework.bookService.services.BooksPurchasingManagerBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 
@@ -33,6 +35,9 @@ public class BooksControllerGetBooksByTagTest extends DatabaseSuite {
 
   @Autowired
   private JpaTagsRepository tagsRepository;
+
+  @MockBean
+  private BooksPurchasingManagerBase booksPurchasingManager;
 
   private Book testBook;
 

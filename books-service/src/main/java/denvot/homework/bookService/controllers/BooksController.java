@@ -1,11 +1,14 @@
 package denvot.homework.bookService.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import denvot.homework.bookService.controllers.requests.BookCreationRequest;
 import denvot.homework.bookService.controllers.requests.BookUpdateRequest;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
 import denvot.homework.bookService.data.entities.Book;
+import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import denvot.homework.bookService.exceptions.InvalidBookDataException;
 import denvot.homework.bookService.services.BookCreationInfo;
+import denvot.homework.bookService.services.BooksPurchasingManagerBase;
 import denvot.homework.bookService.services.BooksServiceBase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +28,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/books")
 public class BooksController {
   private final BooksServiceBase booksService;
+  private final BooksPurchasingManagerBase booksPurchasingManager;
 
-  public BooksController(@Autowired BooksServiceBase booksService) {
+  public BooksController(BooksServiceBase booksService,
+                         BooksPurchasingManagerBase booksPurchasingManager) {
     this.booksService = booksService;
+    this.booksPurchasingManager = booksPurchasingManager;
   }
 
   @PostMapping
@@ -116,5 +122,10 @@ public class BooksController {
     model.addAttribute("books", apiBooks);
 
     return "books";
+  }
+
+  @PostMapping("/books/{book_id}/purchase")
+  public void createPurchase(@PathVariable("book_id") Long bookId) throws BookNotFoundException, JsonProcessingException {
+    booksPurchasingManager.createPurchasing(bookId);
   }
 }
