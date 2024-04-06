@@ -27,4 +27,6 @@ public interface BooksServiceBase {
   Optional<Book> removeTag(Long bookId, Long tagId);
 
   void requestRateBook(Long bookId) throws BookNotFoundException;
+
+  void setBookPurchaseStatus(Long bookId, boolean isSuccess) throws BookNotFoundException;
 }

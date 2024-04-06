@@ -133,6 +133,11 @@ public class BooksService implements BooksServiceBase {
     ratingHub.requestRating(book.getId());
   }
 
+  @Override
+  public void setBookPurchaseStatus(Long bookId, boolean isSuccess) throws BookNotFoundException {
+
+  }
+
   @Transactional(propagation = Propagation.REQUIRED)
   public Optional<Book> updateBook(long id, Consumer<Book> update) {
     var target = findBook(id);
