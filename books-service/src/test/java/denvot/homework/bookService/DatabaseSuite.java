@@ -9,7 +9,8 @@ import org.testcontainers.lifecycle.Startables;
 
 @ContextConfiguration(initializers = DatabaseSuite.Initializer.class)
 public class DatabaseSuite {
-  private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:13");
+  private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:13")
+          .withCommand("-N 500");
 
   static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
