@@ -1,15 +1,15 @@
-package denvot.homework.bookService;
+package denvot.homework.bookpurchaseservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@EnableScheduling
 @SpringBootApplication
-public class BookServiceApplication {
+@EnableScheduling
+public class BookPurchaseServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BookServiceApplication.class, args);
+		SpringApplication.run(BookPurchaseServiceApplication.class, args);
 	}
 
 }

@@ -1,6 +1,7 @@
 package denvot.homework.bookService.services;
 
 import denvot.homework.bookService.data.entities.Book;
+import denvot.homework.bookService.data.entities.PurchasingStatus;
 import denvot.homework.bookService.data.repositories.BooksRepositoryBase;
 import denvot.homework.bookService.data.repositories.exceptions.BookNotFoundException;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
@@ -131,6 +132,14 @@ public class BooksService implements BooksServiceBase {
     var book = booksRepository.findBook(bookId);
 
     ratingHub.requestRating(book.getId());
+  }
+
+  @Override
+  @Transactional
+  public void setBookPurchaseStatus(Long bookId, boolean isSuccess) throws BookNotFoundException {
+    var book = findBook(bookId).orElseThrow(BookNotFoundException::new);
+
+    book.setPurchasingStatus(isSuccess ? PurchasingStatus.DONE : PurchasingStatus.NONE);
   }
 
   @Transactional(propagation = Propagation.REQUIRED)
