@@ -4,12 +4,11 @@ import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.TestHelper;
 import denvot.homework.bookService.controllers.requests.BookUpdateRequest;
 import denvot.homework.bookService.controllers.responses.BookApiEntity;
-import denvot.homework.bookService.data.entities.Author;
-import denvot.homework.bookService.data.entities.Book;
-import denvot.homework.bookService.data.entities.Tag;
+import denvot.homework.bookService.data.entities.*;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaTagsRepository;
+import denvot.homework.bookService.data.repositories.jpa.JpaUserRepository;
 import denvot.homework.bookService.services.BooksPurchasingManagerBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +20,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,6 +41,12 @@ public class BooksControllerUpdateBookTest extends DatabaseSuite {
   @Autowired
   private JpaTagsRepository tagsRepository;
 
+  @Autowired
+  private JpaUserRepository userRepository;
+
+  @Autowired
+  private PasswordEncoder encoder;
+
   @MockBean
   private BooksPurchasingManagerBase booksPurchasingManager;
 
@@ -51,6 +58,7 @@ public class BooksControllerUpdateBookTest extends DatabaseSuite {
     booksRepository.deleteAll();
     authorsRepository.deleteAll();
     tagsRepository.deleteAll();
+    userRepository.deleteAll();
 
     testAuthor = new Author("Test", "Author");
     authorsRepository.save(testAuthor);
@@ -58,6 +66,9 @@ public class BooksControllerUpdateBookTest extends DatabaseSuite {
     testBook = new Book("Test Book", testAuthor);
     booksRepository.save(testBook);
     http.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+
+    userRepository.save(new User("Test", encoder.encode("User"), Set.of(new Role("ADMIN"))));
+    http = http.withBasicAuth("Test", "User");
   }
 
   @Test

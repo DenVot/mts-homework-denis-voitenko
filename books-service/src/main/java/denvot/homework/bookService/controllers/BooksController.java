@@ -39,6 +39,7 @@ public class BooksController {
   }
 
   @PostMapping
+  //@PreAuthorize("hasAuthority('ADMIN')")
   public BookApiEntity createBook(
           @Valid @RequestBody BookCreationRequest bookCreationRequest) throws InvalidBookDataException {
     var bookResult = booksService.createNew(
@@ -48,6 +49,7 @@ public class BooksController {
   }
 
   @DeleteMapping("{id}")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public void deleteBook(@PathVariable("id") long id) {
     booksService.deleteBook(id);
   }
@@ -60,6 +62,7 @@ public class BooksController {
   }
 
   @GetMapping("{id}")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<BookApiEntity> getBook(@PathVariable("id") long id) {
     var book = booksService.findBook(id);
 
@@ -68,6 +71,7 @@ public class BooksController {
   }
 
   @PatchMapping("{id}")
+  //@PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<BookApiEntity> updateBook(
           @PathVariable("id") long id,
           @RequestBody BookUpdateRequest updateRequest) {
@@ -86,6 +90,7 @@ public class BooksController {
   }
 
   @PatchMapping("{book_id}/tags/{tag_id}")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<BookApiEntity> addTagToBook(
           @PathVariable("book_id") long bookId,
           @PathVariable("tag_id") long tagId) {
@@ -100,6 +105,7 @@ public class BooksController {
   }
 
   @DeleteMapping("{book_id}/tags/{tag_id}")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<BookApiEntity> removeTagFromBook(
           @PathVariable("book_id") long bookId,
           @PathVariable("tag_id") long tagId) {

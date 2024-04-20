@@ -3,8 +3,11 @@ package denvot.homework.bookService.controllers.books;
 import denvot.homework.bookService.DatabaseSuite;
 import denvot.homework.bookService.data.entities.Author;
 import denvot.homework.bookService.data.entities.Book;
+import denvot.homework.bookService.data.entities.Role;
+import denvot.homework.bookService.data.entities.User;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
 import denvot.homework.bookService.data.repositories.jpa.JpaBooksRepository;
+import denvot.homework.bookService.data.repositories.jpa.JpaUserRepository;
 import denvot.homework.bookService.services.AuthorsRegistryServiceGatewayBase;
 import denvot.homework.bookService.services.BooksPurchasingManagerBase;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +17,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,6 +46,12 @@ public class BooksControllerDeleteBookTest extends DatabaseSuite {
   @MockBean
   private AuthorsRegistryServiceGatewayBase authorGatewayBase;
 
+  @Autowired
+  private JpaUserRepository userRepository;
+
+  @Autowired
+  private PasswordEncoder encoder;
+
   @MockBean
   private BooksPurchasingManagerBase booksPurchasingManager;
 
@@ -50,12 +61,16 @@ public class BooksControllerDeleteBookTest extends DatabaseSuite {
   public void setUp() {
     booksRepository.deleteAll();
     authorsRepository.deleteAll();
+    userRepository.deleteAll();
 
     Author testAuthor = new Author("Test", "Author");
     authorsRepository.save(testAuthor);
 
     testBook = new Book("Test Book", testAuthor);
     booksRepository.save(testBook);
+
+    userRepository.save(new User("Test", encoder.encode("User"), Set.of(new Role("ADMIN"))));
+    http = http.withBasicAuth("Test", "User");
   }
 
   @Test
