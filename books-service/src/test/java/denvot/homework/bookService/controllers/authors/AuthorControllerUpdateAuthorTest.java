@@ -5,7 +5,10 @@ import denvot.homework.bookService.TestHelper;
 import denvot.homework.bookService.controllers.requests.AuthorUpdateRequest;
 import denvot.homework.bookService.controllers.responses.AuthorApiEntity;
 import denvot.homework.bookService.data.entities.Author;
+import denvot.homework.bookService.data.entities.Role;
+import denvot.homework.bookService.data.entities.User;
 import denvot.homework.bookService.data.repositories.jpa.JpaAuthorsRepository;
+import denvot.homework.bookService.data.repositories.jpa.JpaUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +17,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,6 +40,19 @@ public class AuthorControllerUpdateAuthorTest extends DatabaseSuite {
   private TestRestTemplate http;
 
   private Author testAuthor;
+
+  @Autowired
+  private JpaUserRepository userRepository;
+
+  @Autowired
+  private PasswordEncoder encoder;
+
+  @BeforeEach
+  public void authSetup() {
+    userRepository.deleteAll();
+    userRepository.save(new User("Test", encoder.encode("User"), Set.of(new Role("ADMIN"))));
+    http = http.withBasicAuth("Test", "User");
+  }
 
   @BeforeEach
   public void setUp() {

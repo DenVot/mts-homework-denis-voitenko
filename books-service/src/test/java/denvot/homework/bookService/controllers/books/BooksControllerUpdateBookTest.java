@@ -54,11 +54,17 @@ public class BooksControllerUpdateBookTest extends DatabaseSuite {
   private Author testAuthor;
 
   @BeforeEach
+  public void authSetup() {
+    userRepository.deleteAll();
+    userRepository.save(new User("Test", encoder.encode("User"), Set.of(new Role("ADMIN"))));
+    http = http.withBasicAuth("Test", "User");
+  }
+
+  @BeforeEach
   public void setUp() {
     booksRepository.deleteAll();
     authorsRepository.deleteAll();
     tagsRepository.deleteAll();
-    userRepository.deleteAll();
 
     testAuthor = new Author("Test", "Author");
     authorsRepository.save(testAuthor);
@@ -66,9 +72,6 @@ public class BooksControllerUpdateBookTest extends DatabaseSuite {
     testBook = new Book("Test Book", testAuthor);
     booksRepository.save(testBook);
     http.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-
-    userRepository.save(new User("Test", encoder.encode("User"), Set.of(new Role("ADMIN"))));
-    http = http.withBasicAuth("Test", "User");
   }
 
   @Test

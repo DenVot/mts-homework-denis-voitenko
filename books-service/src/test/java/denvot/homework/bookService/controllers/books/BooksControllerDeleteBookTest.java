@@ -58,19 +58,22 @@ public class BooksControllerDeleteBookTest extends DatabaseSuite {
   private Book testBook;
 
   @BeforeEach
+  public void authSetup() {
+    userRepository.deleteAll();
+    userRepository.save(new User("Test", encoder.encode("User"), Set.of(new Role("ADMIN"))));
+    http = http.withBasicAuth("Test", "User");
+  }
+
+  @BeforeEach
   public void setUp() {
     booksRepository.deleteAll();
     authorsRepository.deleteAll();
-    userRepository.deleteAll();
 
     Author testAuthor = new Author("Test", "Author");
     authorsRepository.save(testAuthor);
 
     testBook = new Book("Test Book", testAuthor);
     booksRepository.save(testBook);
-
-    userRepository.save(new User("Test", encoder.encode("User"), Set.of(new Role("ADMIN"))));
-    http = http.withBasicAuth("Test", "User");
   }
 
   @Test
