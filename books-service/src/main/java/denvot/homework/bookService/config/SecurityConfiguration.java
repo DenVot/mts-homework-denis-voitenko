@@ -21,13 +21,13 @@ public class SecurityConfiguration {
     return new BCryptPasswordEncoder();
   }
 
-@Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-  return http.authorizeHttpRequests(expressionInterceptUrlRegistry ->
-                  expressionInterceptUrlRegistry.anyRequest().authenticated())
-          .httpBasic(Customizer.withDefaults())
-          .csrf().disable()
-          .cors().disable()
-          .build();
-}
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http.authorizeHttpRequests(expressionInterceptUrlRegistry ->
+                    expressionInterceptUrlRegistry.anyRequest().authenticated())
+            .httpBasic(Customizer.withDefaults())
+            .csrf().disable()
+            .cors().disable()
+            .build();
+  }
 }
