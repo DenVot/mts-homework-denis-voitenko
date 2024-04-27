@@ -11,7 +11,6 @@ import denvot.homework.bookService.services.BookCreationInfo;
 import denvot.homework.bookService.services.BooksPurchasingManagerBase;
 import denvot.homework.bookService.services.BooksServiceBase;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,6 +54,7 @@ public class BooksController {
   }
 
   @GetMapping("tags/{tag}")
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT')")
   public List<BookApiEntity> getBooksByTag(@PathVariable("tag") long tagId) {
     var books = booksService.getBooksByTag(tagId);
 
@@ -62,6 +62,7 @@ public class BooksController {
   }
 
   @GetMapping("{id}")
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT')")
   public ResponseEntity<BookApiEntity> getBook(@PathVariable("id") long id) {
     var book = booksService.findBook(id);
 
@@ -119,6 +120,7 @@ public class BooksController {
   }
 
   @GetMapping("/books")
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT')")
   public String getBooksView(Model model) {
     var apiBooks = booksService.getAllBooks()
             .stream()
@@ -132,6 +134,7 @@ public class BooksController {
   }
 
   @PostMapping("/books/{book_id}/purchase")
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT')")
   public void createPurchase(@PathVariable("book_id") Long bookId) throws BookNotFoundException, JsonProcessingException {
     booksPurchasingManager.createPurchasing(bookId);
   }
