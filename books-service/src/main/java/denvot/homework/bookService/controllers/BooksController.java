@@ -11,9 +11,9 @@ import denvot.homework.bookService.services.BookCreationInfo;
 import denvot.homework.bookService.services.BooksPurchasingManagerBase;
 import denvot.homework.bookService.services.BooksServiceBase;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @Validated
 @RequestMapping("/api/books")
+@PreAuthorize("isAuthenticated()")
 public class BooksController {
   private final BooksServiceBase booksService;
   private final BooksPurchasingManagerBase booksPurchasingManager;
@@ -37,6 +38,7 @@ public class BooksController {
   }
 
   @PostMapping
+  @PreAuthorize("hasAuthority('ADMIN')")
   public BookApiEntity createBook(
           @Valid @RequestBody BookCreationRequest bookCreationRequest) throws InvalidBookDataException {
     var bookResult = booksService.createNew(
@@ -46,11 +48,13 @@ public class BooksController {
   }
 
   @DeleteMapping("{id}")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public void deleteBook(@PathVariable("id") long id) {
     booksService.deleteBook(id);
   }
 
   @GetMapping("tags/{tag}")
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT')")
   public List<BookApiEntity> getBooksByTag(@PathVariable("tag") long tagId) {
     var books = booksService.getBooksByTag(tagId);
 
@@ -58,6 +62,7 @@ public class BooksController {
   }
 
   @GetMapping("{id}")
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT')")
   public ResponseEntity<BookApiEntity> getBook(@PathVariable("id") long id) {
     var book = booksService.findBook(id);
 
@@ -66,6 +71,7 @@ public class BooksController {
   }
 
   @PatchMapping("{id}")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<BookApiEntity> updateBook(
           @PathVariable("id") long id,
           @RequestBody BookUpdateRequest updateRequest) {
@@ -84,6 +90,7 @@ public class BooksController {
   }
 
   @PatchMapping("{book_id}/tags/{tag_id}")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<BookApiEntity> addTagToBook(
           @PathVariable("book_id") long bookId,
           @PathVariable("tag_id") long tagId) {
@@ -98,6 +105,7 @@ public class BooksController {
   }
 
   @DeleteMapping("{book_id}/tags/{tag_id}")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<BookApiEntity> removeTagFromBook(
           @PathVariable("book_id") long bookId,
           @PathVariable("tag_id") long tagId) {
@@ -112,6 +120,7 @@ public class BooksController {
   }
 
   @GetMapping("/books")
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT')")
   public String getBooksView(Model model) {
     var apiBooks = booksService.getAllBooks()
             .stream()
@@ -125,6 +134,7 @@ public class BooksController {
   }
 
   @PostMapping("/books/{book_id}/purchase")
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'STUDENT')")
   public void createPurchase(@PathVariable("book_id") Long bookId) throws BookNotFoundException, JsonProcessingException {
     booksPurchasingManager.createPurchasing(bookId);
   }
